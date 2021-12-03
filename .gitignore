@@ -1,2 +1,4 @@
+map/construct_map
+map/wordmap.bin
 plaintext/50k-newline-separated.txt
 src/wordtable.h
