@@ -20,7 +20,7 @@ if __name__ == "__main__":
             line = i.readline().rstrip('\n')
             length += len(line.encode("utf-8")) + 1
             # trust me, it works
-            o.write("\t\"%s\\n\"\n" % line)
+            o.write("\t\"%s\\0\"\n" % line)
         
         # special case for last word
         line = i.readline().rstrip('\n')

@@ -39,8 +39,8 @@ int main (int argc, char **argv) {
 	for (i = 0; i < wordTableLength; ) { /* each byte in wordtable */
 		addrBlock[word++] = i;
 		/* advance to the next word */
-		while (wordTable[i++] != '\n') ;
-			/* skip until after the next newline character */
+		while (wordTable[i++] != '\0') ;
+			/* skip until after the next null character */
 	}
 
 	/* now the address block is filled, let's write it to a file */

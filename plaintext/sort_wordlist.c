@@ -9,14 +9,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #define WORDLIST_NAME	"50k-newline-separated.txt"
 #define WORDLIST_SORTED_NAME	"50k-newline-separated-sorted.txt"
 
-/* this method of sorting strings is taken directly from the example
-   code in the man page for qsort() */
-static int cmpstringp(const void *p1, const void *p2) {
-	return strcmp(*(const char **) p1, *(const char **) p2);
+/*
+ * This is a conceptually dense function, so let me explain.
+ *
+ * qsort() will call this function, passing it two string pointers.
+ * Emphasis on *string pointers*; we are dealing with pointers TO char
+ * pointers. 
+ *
+ * uint16_t is twice the width of unsigned char, so we will cast the
+ * pointers to uint16_t** first to let the compiler know of our
+ * intentions. From there, we dereference the pointers twice, and assign
+ * their values to two uint16_t's. These integers will effectively store
+ * the first 2 chars as a combined value that can be directly compared
+ * to the first 2 chars of another string.
+ *
+ * We can now effectively sort strings by only the first 2 characters.
+ * Do not pass pointers to empty strings to this function. Length must
+ * be at least 1, excluding the null byte.
+ */
+static int cmpstringp_first2(const void *p1, const void *p2) {
+	uint16_t i1 = **(uint16_t **) p1;
+	uint16_t i2 = **(uint16_t **) p2;
+	return i1 - i2;
 }
 
 int main (int argc, char **argv) {
@@ -80,7 +99,7 @@ int main (int argc, char **argv) {
 	
 	/* now we can finally sort! */
 	fprintf(stderr, "%s: Sorting %u words...\n", argv[0], words);
-	qsort(substrings, words, sizeof(char *), cmpstringp);
+	qsort(substrings, words, sizeof(char *), cmpstringp_first2);
 	fprintf(stderr, "%s: Done sorting.\n", argv[0]);
 
 	/* Sorting is done, now concatenate the strings in order into
