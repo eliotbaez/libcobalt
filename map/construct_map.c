@@ -17,8 +17,8 @@
 
 int main (int argc, char **argv) {
 	size_t i; /* offset within the wordtable char array */
-	uint16_t word = 0;
-	uint16_t *addrBlock;
+	unsigned int word = 0;
+	uint32_t *addrBlock;
 	FILE *out;
 
 	out = fopen(MAP_NAME, "w");
@@ -28,7 +28,7 @@ int main (int argc, char **argv) {
 	}
 
 	/* otherwise if &out is a valid file... */
-	addrBlock = malloc(2 * NUMBER_OF_WORDS);
+	addrBlock = malloc(4 * NUMBER_OF_WORDS);
 	if (addrBlock == NULL) {
 		fprintf(stderr, "%s: Error allocating memory.\n", argv[0]);
 		return EXIT_FAILURE;
@@ -44,7 +44,7 @@ int main (int argc, char **argv) {
 	}
 
 	/* now the address block is filled, let's write it to a file */
-	fwrite(addrBlock, 2, NUMBER_OF_WORDS, out);
+	fwrite(addrBlock, 4, NUMBER_OF_WORDS, out);
 	fclose(out);
 	free(addrBlock);
 

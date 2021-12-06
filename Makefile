@@ -13,7 +13,7 @@ plaintext/50k-newline-separated.txt: plaintext/uncomment.py
 plaintext/50k-newline-separated-sorted.txt: plaintext/sort_wordlist plaintext/50k-newline-separated.txt
 	cd plaintext && ./sort_wordlist
 
-src/wordtable.h: plaintext/50k-newline-separated.txt plaintext/convert_to_c.py
+src/wordtable.h: plaintext/50k-newline-separated-sorted.txt plaintext/convert_to_c.py
 	cd plaintext && python3 convert_to_c.py
 
 # remove intermediate products
