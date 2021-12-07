@@ -1,4 +1,6 @@
+map/construct_guidetable
 map/construct_map
+map/guidetable.bin
 map/uint32_array_to_c
 map/wordmap.bin
 

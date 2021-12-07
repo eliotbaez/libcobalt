@@ -13,7 +13,7 @@ if __name__ == "__main__":
         o.write( ("#ifndef WORDTABLE_H\n"
             "#define WORDTABLE_H\n\n"
             "#define NUMBER_OF_WORDS 50000\n\n"
-            "const char *wordTable =\n") )
+            "const char *wordtable =\n") )
         
         length = 0;
         for count in range(49999):
@@ -28,5 +28,5 @@ if __name__ == "__main__":
         o.write("\t\"%s\"\n" % line)
         
         o.write(";\n\n")
-        o.write("const size_t wordTableLength = %d;\n\n" % length)
+        o.write("const size_t wordtable_len = %d;\n\n" % length)
         o.write("#endif /* WORDTABLE_H */")

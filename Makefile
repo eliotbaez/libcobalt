@@ -1,5 +1,11 @@
+map/construct_guidetable: map/construct_guidetable.c src/wordmap.h src/wordtable.h
+	gcc -Isrc -o map/construct_guidetable map/construct_guidetable.c
+
 map/construct_map: map/construct_map.c src/wordtable.h
 	gcc -Isrc -o map/construct_map map/construct_map.c
+
+map/guidetable.bin: map/construct_guidetable
+	cd map && ./construct_guidetable
 
 map/uint32_array_to_c: map/uint32_array_to_c.c
 	gcc -o map/uint32_array_to_c map/uint32_array_to_c.c

@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 		fprintf(fp, "0x%08x, ", buf[i]);
 	}
 	fprintf(fp, "0x%08x\n"
-			"}\n\n"
+			"};\n\n"
 			"#endif\t/* WORDMAP_H */\n"
 			, buf[i]);
 
