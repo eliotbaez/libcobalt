@@ -1,4 +1,5 @@
 map/construct_map
+map/uint32_array_to_c
 map/wordmap.bin
 
 plaintext/50k-newline-separated.txt
@@ -6,3 +7,4 @@ plaintext/50k-newline-separated-sorted.txt
 plaintext/sort_wordlist
 
 src/wordtable.h
+src/wordmap.h
