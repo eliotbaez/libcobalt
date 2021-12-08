@@ -15,7 +15,7 @@
 #include "wordmap.h"
 #include "guidetable.h"
 
-//#include "wordcomp.h"
+#include "cobalt.h"
 
 /*
  * TODO:
