@@ -29,7 +29,7 @@
    found and save processor time. 
 
 	It is partially based on the source code for the glibc strcmp(). */
-bool streq(const char *str1, const char *str2) {
+bool cblt_streq(const char *str1, const char *str2) {
 	while (1) {
 		if (*str1 != *str2)
 			return false;
@@ -46,7 +46,7 @@ bool streq(const char *str1, const char *str2) {
    happen, but it's there just in case. Will return -1 if the string is
    not found. Returns which number word is the first match in the
    wordlist otherwise. */
-int32_t findword(const char *str) {
+int32_t cblt_findword(const char *str) {
 	size_t i;
 	uint16_t buf;
 	uint16_t word;
@@ -72,7 +72,7 @@ int32_t findword(const char *str) {
 	}
 
 	for ( ; word < buf; ++word) {
-		if (streq(str, WORDTABLE + WORDMAP[word]))
+		if (cblt_streq(str, WORDTABLE + WORDMAP[word]))
 			return word;
 	}
 

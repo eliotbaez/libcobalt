@@ -67,9 +67,9 @@ extern const uint32_t WORDMAP[];
 extern const uint16_t GUIDETABLE[];
 
 /* 
- * streq takes two null-terminated strings as arguments and returns true
- * only if the two strings are identical. The two pointers do not need
- * to be unique.
+ * cblt_streq takes two null-terminated strings as arguments and returns
+ * true only if the two strings are identical. The two pointers do not
+ * need to be unique.
  *
  * This function is different from strcmp() in that it will ONLY tell us
  * whether str1 and str2 point to identical strings. This gives us the
@@ -79,17 +79,17 @@ extern const uint16_t GUIDETABLE[];
  * It is intended only for internal use, but it may be useful, so it is
  * exposed in the API.
  */
-bool streq(const char *str1, const char *str2);
+bool cblt_streq(const char *str1, const char *str2);
 
 /*
- * findword searches for str in the word table and returns the ordinal
- * number of the word that matches str. Returns -1 if the string is not
- * found and -2 if passed an empty string.
+ * cblt_findword searches for str in the word table and returns the
+ * ordinal number of the word that matches str. Returns -1 if the string
+ * is not found and -2 if passed an empty string.
  *
  * The value returned by findword can be safely cast to uint16_t without
  * any loss of information, as long as neither of the 2 error codes are
  * returned.
  */
-int32_t findword(const char *str);
+int32_t cblt_findword(const char *str);
 
 #endif /* COBALT_H */

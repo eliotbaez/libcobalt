@@ -33,6 +33,9 @@ int main(int argc, char **argv) {
 
 	/* build the guide table */
 	for (first2chars = 0; first2chars < 0x10000; ) {
+		/* This line is pretty difficult to understand if you haven't
+		   familiarized yourself with the structures that this library
+		   uses. Make sure to read /include/cobalt.h first. */
 		buf = *( (uint16_t *) &(WORDTABLE[WORDMAP[word]]) );
 		
 		if (buf > first2chars) {
