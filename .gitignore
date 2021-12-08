@@ -10,3 +10,5 @@ plaintext/sort_wordlist
 
 src/wordtable.h
 src/wordmap.h
+
+util/c_hexdump

@@ -16,7 +16,7 @@
 #endif
 
 int main (int argc, char **argv) {
-	size_t i; /* offset within the wordtable char array */
+	size_t i; /* offset within the WORDTABLE char array */
 	unsigned int word = 0;
 	uint32_t *addrBlock;
 	FILE *out;
@@ -36,10 +36,10 @@ int main (int argc, char **argv) {
 
 	/* now we have enough memory, we may proceed */
 	fprintf(stderr, "%s: Writing word map to %s\n", argv[0], MAP_NAME);
-	for (i = 0; i < wordtable_len; ) { /* each byte in wordtable */
+	for (i = 0; i < WORDTABLE_LEN; ) { /* each byte in WORDTABLE */
 		addrBlock[word++] = i;
 		/* advance to the next word */
-		while (wordtable[i++] != '\0') ;
+		while (WORDTABLE[i++] != '\0') ;
 			/* skip until after the next null character */
 	}
 

@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
 	/* build the guide table */
 	for (first2chars = 0; first2chars < 0x10000; ) {
-		buf = *( (uint16_t *) &(wordtable[wordmap[word]]) );
+		buf = *( (uint16_t *) &(WORDTABLE[WORDMAP[word]]) );
 		
 		if (buf > first2chars) {
 			/* if this pair of characters doesn't exist in the word
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 		buf = *( (uint16_t *)argv[i]);
 		printf("\tfirst 2 bytes are 0x%04hx\n", buf);
 		printf("\tfirst match is    0x%04hx\n", guidetable[buf]);
-		printf("\tword is \"%s\"\n", wordtable + wordmap[guidetable[buf]]);
+		printf("\tword is \"%s\"\n", WORDTABLE + WORDMAP[guidetable[buf]]);
 	}
 	
 	fprintf(stderr, "%s: Done.\n", argv[0]);
