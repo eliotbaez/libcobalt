@@ -150,4 +150,14 @@ uint16_t *cblt_encodeSentence(const char *sentence);
  */
 char *cblt_decodeSentence(const uint16_t *compressed);
 
+/*
+ * cblt_getUint16BlockSize takes a pointer to a null-terminated array of
+ * 16-bit unsigned integers as an argument and returns the size, in
+ * integers, of that block, including the null terminator.
+ *
+ * This function is intended for finding the size of an array of ints
+ * to know how many bytes to write to a file, or a similar scenario.
+ */
+size_t cblt_getUint16BlockSize(const uint16_t *block);
+
 #endif /* COBALT_H */
