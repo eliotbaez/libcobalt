@@ -122,7 +122,7 @@ int32_t cblt_findWord(const char *str);
  * is the job of the programmer to free() the pointer after doing
  * something meaningful with the data.
  *
- * This function will return a NULL pointer if any of the following
+ * This function will return a NULL pointer if either of the following
  * errors occur:
  * 	- sentence is a NULL Pointer 
  * 	- a memory allocation fails within the function
@@ -131,5 +131,23 @@ int32_t cblt_findWord(const char *str);
  * 16-bit unsigned integer with the value 0.
  */
 uint16_t *cblt_encodeSentence(const char *sentence);
+
+/*
+ * cblt_decodeSentence takes a single null-terminated array of 16-bit
+ * unsigned integers as an argument and returns a pointer to a null-
+ * terminated string of characters containing the original sentence. The
+ * block of memory pointed to by the return value is dynamically
+ * allocated, so it is the job of the programmer to free() the pointer
+ * after doing something meaningful with the data.
+ *
+ * This function will return a NULL pointer if either of the following
+ * errors occur:
+ * 	- compressed is a NULL pointer
+ * 	- a memory allocation fails within the function
+ *
+ * If passed a pointer to a 16-bit unsigned integer with the value 0,
+ * the function will return a pointer to an empty string.
+ */
+char *cblt_decodeSentence(const uint16_t compressed);
 
 #endif /* COBALT_H */

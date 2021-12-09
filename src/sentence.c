@@ -83,7 +83,7 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 }
 
 
-char *cblt_decodeSentence(uint16_t *compressed) {
+char *cblt_decodeSentence(const uint16_t *compressed) {
 	size_t i;		/* index for compressed */
 	size_t j;		/* index for sentence */
 	size_t size;	/* size of memory block needed to decode compressed */
