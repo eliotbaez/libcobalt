@@ -22,10 +22,13 @@
  * separated, and the entire list is null-terminated. 
  * 
  * WORDTABLE_LEN is the length of the entire WORDTABLE array, excluding
- * the final null byte. 
+ * the final null byte.
+ *
+ * NUMBER_OF_WORDS is the number of words in the table.
  */
 extern const char *WORDTABLE;
 extern const size_t WORDTABLE_LEN;
+extern const uint16_t NUMBER_OF_WORDS;
 
 /* 
  * WORDMAP is an array of 32-bit unsigned integers that store indexes
@@ -37,7 +40,7 @@ extern const size_t WORDTABLE_LEN;
  * address obtained from WORDTABLE[ WORDMAP[n] ] can be treated directly
  * as a null-terminated string containing the nth word in the table.
  *
- * The number of elements in WORDMAP is defined in the macro NUMBER_OF_WORDS.
+ * The number of elements in WORDMAP is equal to NUMBER_OF_WORDS.
  */
 extern const uint32_t WORDMAP[];
 

@@ -10,9 +10,10 @@ NUMBER_OF_WORDS = 50000
 
 if __name__ == "__main__":
     with open("50k-newline-separated-sorted.txt", "rt") as i, open("../src/wordtable.h", "wt") as o:
-        o.write( ("#ifndef WORDTABLE_H\n"
+        o.write( ("#include <stdint.h>\n\n"
+            "#ifndef WORDTABLE_H\n"
             "#define WORDTABLE_H\n\n"
-            "#define NUMBER_OF_WORDS 50000\n\n"
+            "const uint16_t NUMBER_OF_WORDS = 50000;\n\n"
             "const char *WORDTABLE =\n") )
         
         length = 0;
