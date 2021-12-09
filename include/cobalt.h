@@ -148,6 +148,6 @@ uint16_t *cblt_encodeSentence(const char *sentence);
  * If passed a pointer to a 16-bit unsigned integer with the value 0,
  * the function will return a pointer to an empty string.
  */
-char *cblt_decodeSentence(const uint16_t compressed);
+char *cblt_decodeSentence(const uint16_t *compressed);
 
 #endif /* COBALT_H */

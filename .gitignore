@@ -1,3 +1,5 @@
+lib/libcobalt.so
+
 map/construct_guidetable
 map/construct_map
 map/guidetable.bin

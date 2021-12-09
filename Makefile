@@ -1,8 +1,11 @@
+lib/libcobalt.so: src/findword.c src/sentence.c src/wordtable.h src/wordmap.h src/guidetable.h
+	gcc -I include/ -o lib/libcobalt.so -shared -fPIC src/findword.c src/sentence.c
+
 map/construct_guidetable: map/construct_guidetable.c src/wordmap.h src/wordtable.h
-	gcc -Isrc -o map/construct_guidetable map/construct_guidetable.c
+	gcc -I src/ -o map/construct_guidetable map/construct_guidetable.c
 
 map/construct_map: map/construct_map.c src/wordtable.h
-	gcc -Isrc -o map/construct_map map/construct_map.c
+	gcc -I src/ -o map/construct_map map/construct_map.c
 
 map/guidetable.bin: map/construct_guidetable
 	cd map && ./construct_guidetable
@@ -33,8 +36,7 @@ src/wordtable.h: plaintext/50k-newline-separated-sorted.txt plaintext/convert_to
 util/c_hexdump: util/c_hexdump.c
 	gcc -o util/c_hexdump util/c_hexdump.c
 
-
-default: src/guidetable.h
+default: lib/libcobalt.so
 
 # remove intermediate products
 clean:
@@ -46,6 +48,7 @@ clean:
 # Remove even the stuff that we actually want. This is usually locally-
 # generated header files and executables.
 clean-all: clean
+	rm -f lib/libcobalt.so
 	rm -f map/construct_map
 	rm -f map/construct_guidetable
 	rm -f map/uint32_array_to_c
