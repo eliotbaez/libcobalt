@@ -46,15 +46,14 @@ bool cblt_streq(const char *str1, const char *str2) {
    happen, but it's there just in case. Will return -1 if the string is
    not found. Returns which number word is the first match in the
    wordlist otherwise. */
-int32_t cblt_findword(const char *str) {
-	size_t i;
+int32_t cblt_findWord(const char *str) {
 	uint16_t buf;
 	uint16_t word;
 
 	/* Empty strings will break this function. */
 	if (str[0] == '\0') {
 		/* Not anymore. */
-		return -2;
+		return CBLT_EMPTY_WORD_ARG;
 	}
 	
 	/* word is initialized to the starting point of our search */
@@ -76,5 +75,5 @@ int32_t cblt_findword(const char *str) {
 			return word;
 	}
 
-	return -1;
+	return CBLT_WORD_NOT_FOUND;
 }

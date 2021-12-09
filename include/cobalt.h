@@ -82,14 +82,51 @@ extern const uint16_t GUIDETABLE[];
 bool cblt_streq(const char *str1, const char *str2);
 
 /*
- * cblt_findword searches for str in the word table and returns the
+ * cblt_findWord searches for str in the word table and returns the
  * ordinal number of the word that matches str. Returns -1 if the string
  * is not found and -2 if passed an empty string.
  *
- * The value returned by findword can be safely cast to uint16_t without
- * any loss of information, as long as neither of the 2 error codes are
- * returned.
+ * The value returned by cblt_findWord can be safely cast to uint16_t
+ * without any loss of information, as long as neither of the 2 error
+ * codes are returned.
  */
-int32_t cblt_findword(const char *str);
+int32_t cblt_findWord(const char *str);
+
+#define CBLT_WORD_NOT_FOUND	-1
+#define CBLT_EMPTY_WORD_ARG	-2
+
+/*
+ * In a uint16_t array, an integer with the value CBLT_BEGIN_STRING
+ * indicates that the address of the next integer is the beginning of
+ * a null-terminated char array.
+ *
+ * There are 2 other special cases, which are the period (.) and the
+ * comma (,). These characters are common enough in sentences that it
+ * makes sense to give them their own hard-coded numbers.
+ *
+ * Spaces are even more common, and such they are interpreted as the
+ * delimiter character when encoding and decoding.
+ */
+#define CBLT_BEGIN_STRING	0xFFFF
+#define CBLT_PERIOD			0xFFFE	/*** NOT YET IMPLEMENTED ***/
+#define CBLT_COMMA			0xFFFD	/*** NOT YET IMPLEMENTED ***/
+
+/*
+ * cblt_encodeSentence takes a single null-terminated sentence as an
+ * argument and returns a pointer to a null-terminated array of 16-bit
+ * unsigned integers containing the compressed sentence data. The memory
+ * block pointed to by the return value is dynamically allocated, so it
+ * is the job of the programmer to free() the pointer after doing
+ * something meaningful with the data.
+ *
+ * This function will return a NULL pointer if any of the following
+ * errors occur:
+ * 	- sentence is a NULL Pointer 
+ * 	- a memory allocation fails within the function
+ *
+ * If passed an empty string, the function will return a pointer to a
+ * 16-bit unsigned integer with the value 0.
+ */
+uint16_t *cblt_encodeSentence(const char *sentence);
 
 #endif /* COBALT_H */
