@@ -69,12 +69,10 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 			   practicality reasons */
 			length = strlen(word) + 1;
 			memcpy(&compressed[i], word, length);
-			printf("%s: word not found\n", (char *)&compressed[i]);
 			/* Increment i by ceil(length / 2). Since there's no ceiling
 			   division operator for ints, we'll do this the fun way. */
 			i += (length / 2 + (length % 2 != 0));
 		} else {
-			printf("%s is word %d\n", word, wordNum);
 			compressed[i++] = (uint16_t)wordNum;
 		}
 	}
@@ -84,14 +82,91 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 	return compressed;
 }
 
+
+char *cblt_decodeSentence(uint16_t *compressed) {
+	size_t i;		/* index for compressed */
+	size_t j;		/* index for sentence */
+	size_t size;	/* size of memory block needed to decode compressed */
+	size_t length;	/* length of a string */
+	char *sentence;
+
+	if (compressed == NULL)
+		return NULL;
+	
+	/* find the amount of memory needed to decode */
+	size = 1;
+	for (i = 0; ; ) {
+		if (compressed[i] == 0) {
+			/* null terminator */
+			break;
+		} else if (compressed[i] == CBLT_BEGIN_STRING) {
+			/* incrementing i to skip past the CBLT_BEGIN_STRING signal 
+			   The +1 is because there is a space after every string.*/
+			length = strlen( (char *)&compressed[++i] ) + 1;
+			size += length;
+			/* increment i by ceil((length + 1) / 2) */
+			i += (length / 2 + (length % 2 != 0));
+		} else if (compressed[i] < NUMBER_OF_WORDS) {
+			/* in range! */
+			/* +1 because all words are separated by a space too */
+			size += strlen(WORDTABLE + WORDMAP[ compressed[i] ] ) + 1;
+			++i;
+		} else {
+			/* otherwise do nothing and skip to the next int if
+			   compressed[i] is out of range */
+			++i;
+		}
+	}
+
+	sentence = malloc(sizeof(char) * size);
+	if (sentence == NULL)
+		return NULL;
+
+	for (i = 0, j = 0 ; ; ) {
+		if (compressed[i] == 0) {
+			sentence[j++] = '\0';
+			break;
+		} else if (compressed[i] == CBLT_BEGIN_STRING) {
+			length = strlen( (char *)&compressed[++i] );
+			memcpy(sentence + j, compressed + i, length);
+			j += length;
+			/* increment length beforehand to make this calculation
+			   similar to the ones above */
+			++length;
+			i += (length / 2 + (length % 2 != 0));
+			/* and append a space like we said */
+			sentence[j++] = ' ';
+		} else if (compressed[i] < NUMBER_OF_WORDS) {
+			length = strlen(WORDTABLE + WORDMAP[ compressed[i] ]);
+			memcpy(sentence + j, WORDTABLE + WORDMAP[ compressed[i] ], length);
+			j += length;
+			++i;
+			/* append a space */
+			sentence[j++] = ' ';
+		} else {
+			/* compressed[i] is out of range, do nothing */
+			++i;
+		}
+	}
+
+	return sentence;
+}
+
+#if 0
 int main(int argc, char **argv) {
 	uint16_t *compressed;
+	char *restored;
 	if (argc != 2) {
 		printf("bruh\n");
 		return 1;
 	}
 
 	compressed = cblt_encodeSentence(argv[1]);
+	restored = cblt_decodeSentence(compressed);
+
+	printf("%s\n%s\n", argv[1], restored);
 	free(compressed);
+	free(restored);
 	return 0;
 }
+#endif
