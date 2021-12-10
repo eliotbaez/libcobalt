@@ -1,3 +1,6 @@
+examples/encode
+examples/decode 
+
 lib/libcobalt.so
 
 map/construct_guidetable
