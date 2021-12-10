@@ -5,6 +5,13 @@
  * This file is an example of how to use libcobalt to write a simple text
  * decoding application to undo the encoding of the simple text encoding
  * application.
+ *
+ * Usage:	./decode COMPRESSEDFILE TXTFILE
+ * 	COMPRESSEDFILE  A file containing compressed data, hopefully the output of
+ * 	                the corresponding encode command
+ * 	TXTFILE         The file where the decoded text will be written
+ * 	                Pass /dev/stdout as TXTFILE to conveniently print the
+ * 	                decoded contents of COMPRESSEDFILE
  */
 
 #include <stdio.h>

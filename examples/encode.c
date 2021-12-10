@@ -4,6 +4,10 @@
  *
  * This file is an example of how to use libcobalt to write a simple text
  * encoding application.
+ *
+ * Usage:	./encode TXTFILE COMPRESSEDFILE
+ * 	TXTFILE         A file containing plain text that you would like to encode
+ * 	COMPRESSEDFILE  A file where the encoded result will be written
  */
 
 #include <stdio.h>

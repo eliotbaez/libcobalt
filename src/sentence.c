@@ -40,7 +40,7 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 		return NULL;
 	
 	/* We make a mutable copy of sentence because strtok() overwrites
-	 * characters in its first argument. */
+	   characters in its first argument. */
 	length = strlen(sentence);
 	mSentence = malloc(sizeof(char) * (length + 1));
 	if (mSentence == NULL)
@@ -48,7 +48,7 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 	strcpy(mSentence, sentence);
 	
 	/* The compressed sentence will never have a length greater than twice the
-	   input string, so we will allocate enough memory for the worse case
+	   input string, so we will allocate enough memory for the worst case
 	   scenario. */
 	compressed = malloc(sizeof(uint16_t) * (2 * length + 1));
 	if (compressed == NULL) {
@@ -81,7 +81,14 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 	return compressed;
 }
 
-
+/*
+ * This function takes a single null-terminated array of 16-bit unsigned
+ * integers as an argument and returns a pointer to a null-terminated string of
+ * characters containing the original sentence. The block of memory pointed to
+ * by the return value is dynamically allocated, so it is the job of the
+ * programmer to free() the pointer after doing something meaningful with the
+ * data.
+ */
 char *cblt_decodeSentence(const uint16_t *compressed) {
 	size_t i;		/* index for compressed */
 	size_t j;		/* index for sentence */
@@ -92,7 +99,11 @@ char *cblt_decodeSentence(const uint16_t *compressed) {
 	if (compressed == NULL)
 		return NULL;
 	
-	/* find the amount of memory needed to decode */
+	/* Dynamically reallocating memory as we decode the sentence would be
+	   pretty inefficient, so we read through the compressed data once to
+	   calculate the amount of memory needed to decompress it first. size is
+	   initialized to 1 so that there is space for a null terminator even for
+	   en empty string. */
 	size = 1;
 	for (i = 0; ; ) {
 		if (compressed[i] == 0) {
