@@ -124,7 +124,10 @@ char *cblt_decodeSentence(const uint16_t *compressed) {
 
 	for (i = 0, j = 0 ; ; ) {
 		if (compressed[i] == 0) {
-			sentence[j++] = '\0';
+			/* use the character before sentence[j] and terminate the sentence
+			   there, because the function tacks on a space after every word,
+			   even the last one. */
+			sentence[j - 1] = '\0';
 			break;
 		} else if (compressed[i] == CBLT_BEGIN_STRING) {
 			length = strlen( (char *)&compressed[++i] );

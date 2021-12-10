@@ -17,7 +17,7 @@
 /* I don't know whether I should be proud of disappointed of this
  * function */
 size_t cblt_getUint16BlockSize(const uint16_t *block) {
-	const uint16_t *intptr = block + 1;
+	const uint16_t *intptr = block;
 
 	while (1)
 		if (*block++ == 0)

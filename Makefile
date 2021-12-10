@@ -51,7 +51,6 @@ clean-all: clean
 	rm -f lib/libcobalt.so
 	rm -f map/construct_map
 	rm -f map/construct_guidetable
-	rm -f map/uint32_array_to_c
 	rm -f plaintext/sort_wordlist
 	rm -f src/guidetable.h
 	rm -f src/wordmap.h
