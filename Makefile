@@ -7,6 +7,7 @@ CC = gcc
 RM = rm
 
 lib/libcobalt.so: src/findword.c src/sentence.c src/blocksize.c src/wordtable.h src/wordmap.h src/guidetable.h
+	@mkdir -p lib/
 	$(CC) -I include/ -o lib/libcobalt.so -shared -fPIC src/findword.c src/sentence.c src/blocksize.c
 
 map/construct_guidetable: map/construct_guidetable.c src/wordmap.h src/wordtable.h
