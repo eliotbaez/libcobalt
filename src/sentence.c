@@ -16,18 +16,17 @@
 /* this is where the magic happens >:) */
 
 /*
- * This function takes a null-terminated string as input, interpreted
- * as a sentence. The sentence is split into words that are separated
- * by spaces. Each word is then looked up with cblt_findWord(). If the
- * word is found in the word list, then its ordinal number is written
- * to the output array of uint16_t's.
+ * This function takes a null-terminated string as input, interpreted as a
+ * sentence. the sentence is split into words that are separated by spaces. Each
+ * word is then looked up with cblt_findword(). If the word is found in the
+ * word table, then its ordinal number is written to the output array of
+ * uint16_t's.
  * 
- * If the word is not found, then the string that contains the word is
- * copied directly into the array, including the null terminating
- * character.
+ * If the word is not found, then the string that contains the word is copied
+ * directly into the array, including the null terminating character.
  *
- * It is the job of the programmer to free() the returned pointer after
- * doing something meaningful with the output of this function.
+ * It is the job of the programmer to free() the returned pointer after doing
+ * something meaningful with the output of this function.
  */
 uint16_t *cblt_encodeSentence(const char *sentence) {
 	char *mSentence;		/* points to a mutable copy of sentence */
@@ -48,9 +47,9 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 		return NULL;
 	strcpy(mSentence, sentence);
 	
-	/* The compressed sentence will never have a length greater than
-	   twice the input string, so we will allocate enough memory for the
-	   worst case scenario. */
+	/* The compressed sentence will never have a length greater than twice the
+	   input string, so we will allocate enough memory for the worse case
+	   scenario. */
 	compressed = malloc(sizeof(uint16_t) * (2 * length + 1));
 	if (compressed == NULL) {
 		free(mSentence);

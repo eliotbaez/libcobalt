@@ -2,8 +2,9 @@
  * sort_wordlist.c
  * by Eliot Baez
  *
- * This program opens the already uncommented wordlist file and sorts
- * its contents alphabetically into a new file.
+ * This program opens the already uncommented wordlist file and sorts its
+ * contents into a new file. The sorting is done by way of the magic comparison
+ * function described below.
  */
 
 #include <stdio.h>
@@ -17,20 +18,18 @@
 /*
  * This is a conceptually dense function, so let me explain.
  *
- * qsort() will call this function, passing it two string pointers.
- * Emphasis on *string pointers*; we are dealing with pointers TO char
- * pointers. 
+ * qsort() will call this function, passing it two string pointers. Emphasis on
+ * *string pointers*; we are dealing with pointers TO char pointers.
  *
- * uint16_t is twice the width of unsigned char, so we will cast the
- * pointers to uint16_t** first to let the compiler know of our
- * intentions. From there, we dereference the pointers twice, and assign
- * their values to two uint16_t's. These integers will effectively store
- * the first 2 chars as a combined value that can be directly compared
- * to the first 2 chars of another string.
+ * uint16_t is twice the width of unsigned char, so we will cast the pointers to
+ * uint16_t** first to let the compiler know of our intentions. From there, we
+ * dereference the pointers twice, and assign their values to two uint16_t's.
+ * These integers will effectively store the first 2 chars as a combined value
+ * that can be directly compared to the first 2 chars of another string.
  *
- * We can now effectively sort strings by only the first 2 characters.
- * Do not pass pointers to empty strings to this function. Length must
- * be at least 1, excluding the null byte.
+ * We can now effectively sort strings by only the first 2 characters. Do not
+ * pass pointers to empty strings to this function. Length must be at least 1,
+ * excluding the null byte.
  */
 static int cmpstringp_first2(const void *p1, const void *p2) {
 	uint16_t i1 = **(uint16_t **) p1;
@@ -102,10 +101,10 @@ int main (int argc, char **argv) {
 	qsort(substrings, words, sizeof(char *), cmpstringp_first2);
 	fprintf(stderr, "%s: Done sorting.\n", argv[0]);
 
-	/* Sorting is done, now concatenate the strings in order into
-	   ANOTHER BUFFER!!! I emphasize this because all the pointers in
-	   the substrings array point to addresses that are part of buf.
-	   Thus, we cannot overwrite buf right now. */
+	/* Sorting is done, now concatenate the strings in order into ANOTHER
+	   BUFFER!!! I emphasize this because all the pointers in the substrings
+	   array point to addresses that are part of buf. Thus, we cannot overwrite
+	   buf right now. */
 	word = 0;
 	for (i = 0; i < size; ) {
 		strcpy(sortedBuf + i, substrings[word]);

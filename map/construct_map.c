@@ -2,8 +2,8 @@
  * construct_map.c
  * by Eliot Baez
  *
- * This is a helper program to index all the different words in the word
- * table by the index of the word and its offset in the data block.
+ * This is a helper program to index all the different words in the word table
+ * by the index of the word and its offset in the data block.
  */
 
 #include <stdio.h>

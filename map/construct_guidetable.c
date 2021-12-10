@@ -2,8 +2,8 @@
  * construct_guidetable.c
  * by Eliot Baez
  *
- * This program will construct a table of guide addresses, similar to
- * guide words in a paper dictionary.
+ * This program will construct a table of guide addresses, similar to guide
+ * words in a paper dictionary.
  */
 
 #include <stdio.h>
@@ -16,8 +16,8 @@
 #define GUIDETABLE_NAME	"guidetable.bin"
 
 int main(int argc, char **argv) {
-	/* Index for guidetable; needs to be greater than 16 bits to prevent
-	   integer overflow from causing an infinite loop. Ask me how I know */
+	/* Index for guidetable; needs to be greater than 16 bits to prevent integer
+	 * overflow from causing an infinite loop. Ask me how I know. */
 	uint32_t first2chars;
 	uint16_t buf;	/* stores the actual first 2 chars of the string */
 	uint16_t word = 0;	/* index for wordmap */
@@ -34,14 +34,14 @@ int main(int argc, char **argv) {
 	/* build the guide table */
 	for (first2chars = 0; first2chars < 0x10000; ) {
 		/* This line is pretty difficult to understand if you haven't
-		   familiarized yourself with the structures that this library
-		   uses. Make sure to read /include/cobalt.h first. */
+		   familiarized yourself with the structures that this library uses.
+		   Make sure to read /include/cobalt.h first. */
 		buf = *( (uint16_t *) &(WORDTABLE[WORDMAP[word]]) );
 		
 		if (buf > first2chars) {
-			/* if this pair of characters doesn't exist in the word
-			   table, then set the value of the guide table at this
-			   index to the last word in the word table */
+			/* if this pair of characters doesn't exist in the word table, then
+			   set the value of the guide table at this index to the last word
+			   in the word table. */
 			guidetable[first2chars++] = NUMBER_OF_WORDS - 1;
 		} else if (buf == first2chars) {
 			guidetable[first2chars++] = word;
@@ -59,7 +59,8 @@ int main(int argc, char **argv) {
 		}
 	}
 	
-	fprintf(stderr, "%s: Writing guide table to %s\n", argv[0], GUIDETABLE_NAME);
+	fprintf(stderr, "%s: Writing guide table to %s\n",
+			argv[0], GUIDETABLE_NAME);
 	fwrite(guidetable, 2, 0x10000, out);
 	fclose(out);
 	

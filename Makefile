@@ -59,6 +59,7 @@ clean:
 # Remove even the stuff that we actually want. This is usually locally-
 # generated header files and executables.
 clean-all: clean
+	$(RM) -f examples/encode examples/decode
 	$(RM) -f lib/libcobalt.so
 	$(RM) -f map/construct_map map/construct_guidetable
 	$(RM) -f plaintext/sort_wordlist

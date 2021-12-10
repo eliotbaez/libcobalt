@@ -2,18 +2,17 @@
  * c_hexdump.c
  * by Eliot Baez
  *
- * This xxd style hexdump program takes a binary file as input and
- * writes its output in C header format to some other file named by the
- * user. The first argument after the program name is an integer
- * specifying the width in bytes of the integers to be used to store the
- * data in the header file. For example, 4 bytes => uint32_t, 2 bytes =>
- * uint16_t, etc. 
+ * This xxd style hexdump program takes a binary file as input and writes its
+ * output in C header format to some other file, both named by the user. The
+ * first argument after the program is an integer specifying the width in bytes
+ * of the integers to be used to store the data in the header file. For example,
+ * 4 bytes +. uint32_t, 2 bytes => uint16_t, etc.
  *
- * The width in bytes is NOT simply how the digits are grouped in the
- * header file. The width affects the order in which bytes are read from
- * the file, as this file obeys the endianness of the system that 
- * compiles it. The user must be wary of this fact and only use widths
- * other than 1 if they are certain the know what they are doing.
+ * The width in bytes is NOT simply how the digits are grouped in the header
+ * file. The width affects the order in which bytes are read from the file, as
+ * this file obeys the endianness of the system that compiles it. The user must
+ * be weary of this fact and use widths other than 1 ONLY IF THEY ARE CERTAIN
+ * that they know what they are doing. 
  */
 
 #include <stdio.h>
@@ -21,6 +20,9 @@
 #include <stdint.h>
 #include <ctype.h>
 
+/* These are specialized printing functions for different size unsigned
+   integers. The generic function pointer in main() will point to one of these
+   functions based on the integer width specified by the user. */
 int fprintu8(FILE *fp, void *uint8ptr, size_t index) {
 	return fprintf(fp, "0x%02hhx", *( (uint8_t *)uint8ptr + index ));
 }
@@ -34,11 +36,11 @@ int fprintu32(FILE *fp, void *uint32ptr, size_t index) {
 }
 
 int fprintu64(FILE *fp, void *uint64ptr, size_t index) {
-	return fprintf(fp, "0x%016lx", *( (uint64_t *)uint64ptr +  index ));
+	return fprintf(fp, "0x%016lx", *( (uint64_t *)uint64ptr + index ));
 }
 
-/* filename magic - end the string at the first dot unless the file
-       name begins with a dot, and capitalize everything */
+/* filename magic - end the string at the first dot unless the file name begins
+   with a dot, and capitalize everything */
 void filenameMagic(char *name) {
 	size_t i;
 	
@@ -80,28 +82,24 @@ int main(int argc, char **argv) {
 	width = strtol(argv[1], NULL, 10);
 	switch (width) {
 	case 1:
-		//intptr = &
 		typename = "uint8_t";
 		printFunc = fprintu8;
-		//uint8_t *buf;
 		break;
 	case 2:
 		typename = "uint16_t";
 		printFunc = fprintu16;
-		//uint16_t *buf;
 		break;
 	case 4:
 		typename = "uint32_t";
 		printFunc = fprintu32;
-		//uint32_t *buf;
 		break;
 	case 8:
 		typename = "uint64_t";
 		printFunc = fprintu64;
-		//uint64_t *buf;
 		break;
 	default:
-		fprintf(stderr, "%s: %d is not a valid integer width.\n", argv[1], width);
+		fprintf(stderr, "%s: %d is not a valid integer width.\n",
+			argv[1], width);
 		return EXIT_FAILURE;
 	}
 	
