@@ -33,11 +33,11 @@ extern const uint16_t NUMBER_OF_WORDS;
 /* 
  * WORDMAP is an array of 32-bit unsigned integers that store indexes within
  * WORDTABLE. For example, WORDMAP[807] stores the index of word 807 within
- * WORDTABLE, such that WORDTABLE[ WORDMAP[807] ] is the address in memory of
+ * WORDTABLE, such that &WORDTABLE[ WORDMAP[807] ] is the address in memory of
  * the first character of the 807th word in the table.
  *
  * Since each of the words are null-terminated within the table, the address
- * obtained from WORDTABLE[ WORDMAP[n] ] can be treated directly as a null-
+ * obtained from &WORDTABLE[ WORDMAP[n] ] can be treated directly as a null-
  * terminated string containing the nth word in the table.
  *
  * WORDMAP_LEN is the total number of elements in WORDMAP, including the first

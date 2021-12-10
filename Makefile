@@ -32,7 +32,7 @@ src/guidetable.h: map/guidetable.bin util/c_hexdump
 	cd map && ../util/c_hexdump 2 guidetable.bin ../src/guidetable.h
 src/wordmap.h: map/wordmap.bin util/c_hexdump
 	cd map && ../util/c_hexdump 4 wordmap.bin ../src/wordmap.h
-src/wordtable.h: plaintext/50k-newline-separated-sorted.txt plaintext/convert_to_c.py
+src/wordtable.h: plaintext/convert_to_c.py plaintext/50k-newline-separated-sorted.txt
 	cd plaintext && python3 convert_to_c.py
 
 util/c_hexdump: util/c_hexdump.c
@@ -55,7 +55,7 @@ examples: examples/encode examples/decode
 # remove intermediate products
 clean:
 	$(RM) -f map/guidetable.bin map/wordmap.bin
-	$(RM) -f plaintext/50k-newline-separated.txt plaintext/50k-newline-separated.txt
+	$(RM) -f plaintext/50k-newline-separated.txt plaintext/50k-newline-separated-sorted.txt
 
 # Remove even the stuff that we actually want. This is usually locally-
 # generated header files and executables.
