@@ -40,9 +40,11 @@ extern const uint16_t NUMBER_OF_WORDS;
  * obtained from WORDTABLE[ WORDMAP[n] ] can be treated directly as a null-
  * terminated string containing the nth word in the table.
  *
- * The number of elements in WORDMAP is equal to NUMBER_OF_WORDS.
+ * WORDMAP_LEN is the total number of elements in WORDMAP, including the first
+ * 256 reserved elements.
  */
 extern const uint32_t WORDMAP[];
+extern const uint16_t WORDMAP_LEN;
 
 /*
  * GUIDETABLE is an array of 16-bit unsigned integers that store indexes within

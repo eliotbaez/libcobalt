@@ -105,7 +105,7 @@ char *cblt_decodeSentence(const uint16_t *compressed) {
 			size += length;
 			/* increment i by ceil((length + 1) / 2) */
 			i += (length / 2 + (length % 2 != 0));
-		} else if (compressed[i] < NUMBER_OF_WORDS) {
+		} else if (compressed[i] < WORDMAP_LEN) {
 			/* in range! */
 			/* +1 because all words are separated by a space too */
 			size += strlen(WORDTABLE + WORDMAP[ compressed[i] ] ) + 1;
@@ -138,7 +138,7 @@ char *cblt_decodeSentence(const uint16_t *compressed) {
 			i += (length / 2 + (length % 2 != 0));
 			/* and append a space like we said */
 			sentence[j++] = ' ';
-		} else if (compressed[i] < NUMBER_OF_WORDS) {
+		} else if (compressed[i] < WORDMAP_LEN) {
 			length = strlen(WORDTABLE + WORDMAP[ compressed[i] ]);
 			memcpy(sentence + j, WORDTABLE + WORDMAP[ compressed[i] ], length);
 			j += length;

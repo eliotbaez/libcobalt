@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 	 * overflow from causing an infinite loop. Ask me how I know. */
 	uint32_t first2chars;
 	uint16_t buf;	/* stores the actual first 2 chars of the string */
-	uint16_t word = 0;	/* index for wordmap */
+	uint16_t word;	/* index for wordmap */
 	uint16_t guidetable[0x10000];
 	size_t i;	/* counting variable for unit test stuff at the end */
 	FILE *out;
@@ -32,6 +32,10 @@ int main(int argc, char **argv) {
 	}
 
 	/* build the guide table */
+	/* in construct_map.c, the first actual word is placed at index 256, since
+	   the first 255 indices are reserved, so we will initialize our word index
+	   accordingly. */
+	word = 0x100;
 	for (first2chars = 0; first2chars < 0x10000; ) {
 		/* This line is pretty difficult to understand if you haven't
 		   familiarized yourself with the structures that this library uses.

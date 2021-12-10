@@ -46,9 +46,9 @@ uninstall:
 default: lib/libcobalt.so
 
 examples/encode: examples/encode.c
-	$(CC) -I include/ -o examples/encode encode.c -lcobalt
+	$(CC) -I include/ -o examples/encode examples/encode.c -lcobalt
 examples/decode: examples/decode.c
-	$(CC) -I include/ -o examples/decode decode.c -lcobalt
+	$(CC) -I include/ -o examples/decode examples/decode.c -lcobalt
 examples: examples/encode examples/decode
 
 # remove intermediate products

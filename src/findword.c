@@ -63,8 +63,9 @@ int32_t cblt_findWord(const char *str) {
 	   This way we don't seach all the way to the end of the word list if we
 	   don't have to. */
 	if (buf == 0xFFFF) {
-		/* search until end of wordlist */
-		buf = NUMBER_OF_WORDS;
+		/* We do this so that buf doesn't overflow from being incremented. */
+		/* Search until end of wordlist */
+		buf = WORDMAP_LEN;
 	} else {
 		buf = GUIDETABLE[buf + 1];
 	}

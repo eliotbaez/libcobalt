@@ -14,7 +14,8 @@ if __name__ == "__main__":
         o.write( ("#include <stdint.h>\n\n"
             "#ifndef WORDTABLE_H\n"
             "#define WORDTABLE_H\n\n"
-            "const uint16_t NUMBER_OF_WORDS = 50000;\n\n"
+            "const uint16_t NUMBER_OF_WORDS = 50000;\n"
+            "const uint16_t WORDMAP_LEN = 50000 + 256;\n\n"
             "const char *WORDTABLE =\n") )
         
         length = 0;
