@@ -5,14 +5,30 @@ on a word-by-word basis.
 
 ## Building
 
+### Linux
+
 On Linux-based systems, building is as easy as running `make` or `make default`
 on your command line at the root directory. Optionally, run `make clean`
 afterward to get rid of some unnecessary intermediate files.
 
 ```sh
-make default
-make clean
+make -f Makefile.old default
+make -f Makefile.old clean
 ```
+
+### Windows or Linux (experimental)
+
+We're currently experimenting with using CMake to streamline the build process.
+On Windows or Linux, run the following commands in your terminal where you have
+access to the necessary build tools, like `CMake` and your C compiler.
+
+```sh
+mkdir build
+cd build
+cmake ..
+```
+
+On Linux, run `make` immediately once that's done. On Windows, good luck.
 
 ## Installing
 
