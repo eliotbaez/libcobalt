@@ -1,7 +1,7 @@
 # I'm choosing this version because it's the oldest version that I have tested
 # on my computer. If you find an older version that has all the necessary
 # features, then this may change.
-cmake_minimum_required(VERSION 3.21.4)
+cmake_minimum_required(VERSION 3.17)
 
 project(libcobalt
 #	VERSION 0.1	# do I really wanna implement this right now?

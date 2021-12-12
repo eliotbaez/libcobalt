@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21.4)
+#cmake_minimum_required(VERSION 3.21.4)
 project(libcobalt_plaintext)
 message("plaintext is being built")
 add_executable(sort_wordlist sort_wordlist.c)
