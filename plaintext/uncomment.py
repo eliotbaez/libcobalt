@@ -8,7 +8,7 @@ if __name__ == "__main__":
     count = 0;
 
     with open("wiki-100k.txt", "rt") as i, \
-            open("50k-newline-separated.txt", "wt") as o:
+            open("50k-newline-separated.txt", "wt", newline='\n') as o:
         while count < 50000:
             line = i.readline();
             if line[0] != '#':
