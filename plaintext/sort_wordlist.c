@@ -128,6 +128,7 @@ int main (int argc, char **argv) {
 
 	free(sortedBuf);
 	free(substrings);
+	free(buf);
 
 	fprintf(stderr, "%s: Done.\n", argv[0]);
 	return 0;
