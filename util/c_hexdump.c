@@ -36,7 +36,7 @@ int fprintu32(FILE *fp, void *uint32ptr, size_t index) {
 }
 
 int fprintu64(FILE *fp, void *uint64ptr, size_t index) {
-	return fprintf(fp, "0x%016lx", *( (uint64_t *)uint64ptr + index ));
+	return fprintf(fp, "0x%016llx", *( (uint64_t *)uint64ptr + index ));
 }
 
 /* filename magic - end the string at the first dot unless the file name begins
@@ -117,6 +117,7 @@ int main(int argc, char **argv) {
 	/* find size of the file */
 	fseek(fp, 0, SEEK_END);
 	size = ftell(fp) / width;
+	fprintf(stderr, "%s: Read %zd items of size %hhd.\n", argv[0], size, width);
 	rewind(fp);
 	
 	/* allocate some memory */

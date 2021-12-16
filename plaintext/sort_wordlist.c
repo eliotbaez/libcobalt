@@ -52,7 +52,7 @@ int main (int argc, char **argv) {
 	char **substrings;	/* array of null terminated words */
 	FILE *fp;		/* take a guess */
 
-	fp = fopen(WORDLIST_NAME, "r");
+	fp = fopen(WORDLIST_NAME, "rb");
 	if (fp == NULL) {
 		fprintf(stderr, "%s: Error opening file %s.\n", argv[0], WORDLIST_NAME);
 		return EXIT_FAILURE;
@@ -117,7 +117,7 @@ int main (int argc, char **argv) {
 		sortedBuf[i++] = '\n';	/* make the null byte a newline */
 	}
 	
-	fp = fopen(WORDLIST_SORTED_NAME, "w");
+	fp = fopen(WORDLIST_SORTED_NAME, "wb");
 	if (fp == NULL) {
 		fprintf(stderr, "%s: Error opening file %s.\n", argv[0], WORDLIST_NAME);
 		free(substrings);

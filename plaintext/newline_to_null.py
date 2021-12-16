@@ -27,9 +27,9 @@ if __name__ == "__main__":
     length = 0
     # First write the null-separated and null-terminated file that will be used
     # to generate the wordtable.c source file
-    with open(INPUT_FILE, "rt") as i, open("wordtable.bin", "wb") as o:
+    with open(INPUT_FILE, "rb") as i, open("wordtable.bin", "wb") as o:
         for count in range(NUMBER_OF_WORDS):
-            line = bytes(i.readline().replace('\n', '\0'), encoding="utf-8")
+            line = bytes(i.readline().replace(b'\n', b'\0'))
             length += len(line)
             o.write(line)
 

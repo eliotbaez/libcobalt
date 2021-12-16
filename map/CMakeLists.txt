@@ -29,7 +29,6 @@ add_executable(construct_guidetable
 	${CMAKE_SOURCE_DIR}/src/globals/wordmap.c
 	${CMAKE_SOURCE_DIR}/src/globals/sizes.c)
 target_include_directories(construct_guidetable PRIVATE
-	${CMAKE_SOURCE_DIR}/src
 	${CMAKE_SOURCE_DIR}/include)
 add_dependencies(construct_guidetable
 	wordtable
