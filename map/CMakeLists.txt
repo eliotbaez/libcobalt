@@ -2,39 +2,52 @@
 
 project(libcobalt_map)
 
-add_executable(construct_map construct_map.c)
-target_include_directories(construct_map PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_executable(construct_map
+	construct_map.c
+	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	${CMAKE_SOURCE_DIR}/src/globals/sizes.c)
+target_include_directories(construct_map PRIVATE
+	${CMAKE_SOURCE_DIR}/src
+	${CMAKE_SOURCE_DIR}/include)
 add_dependencies(construct_map
-	wordtable.h
-)
+	wordtable
+	sizes)
 
-add_custom_target(wordmap.bin
+add_custom_target(generate_wordmap
 	COMMAND construct_map
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS construct_map
-)
+	DEPENDS construct_map)
 
-add_custom_target(wordmap.h
-	COMMAND c_hexdump 4 wordmap.bin ../src/wordmap.h
+add_custom_target(wordmap
+	COMMAND c_hexdump 4 wordmap.bin ../src/globals/wordmap.c
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS wordmap.bin c_hexdump
-)
+	DEPENDS generate_wordmap c_hexdump)
 
-add_executable(construct_guidetable construct_guidetable.c)
-target_include_directories(construct_guidetable PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_executable(construct_guidetable
+	construct_guidetable.c
+	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	${CMAKE_SOURCE_DIR}/src/globals/wordmap.c
+	${CMAKE_SOURCE_DIR}/src/globals/sizes.c)
+target_include_directories(construct_guidetable PRIVATE
+	${CMAKE_SOURCE_DIR}/src
+	${CMAKE_SOURCE_DIR}/include)
 add_dependencies(construct_guidetable
-	wordtable.h
-	wordmap.h
-)
+	wordtable
+	wordmap
+	sizes)
 
-add_custom_target(guidetable.bin
+add_custom_target(generate_guidetable
 	COMMAND construct_guidetable
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS construct_guidetable 
-)
+	DEPENDS construct_guidetable)
 
-add_custom_target(guidetable.h ALL
-	COMMAND c_hexdump 2 guidetable.bin ../src/guidetable.h
+add_custom_target(guidetable
+	COMMAND c_hexdump 2 guidetable.bin ../src/globals/guidetable.c
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS guidetable.bin c_hexdump wordmap.h
-)
+	DEPENDS generate_guidetable c_hexdump wordmap)
+
+set_source_files_properties(
+	${CMAKE_SOURCE_DIR}/src/globals/sizes.c
+	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	${CMAKE_SOURCE_DIR}/src/globals/wordmap.c
+	PROPERTIES GENERATED TRUE)

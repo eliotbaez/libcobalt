@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #ifndef COBALT_H
 #define COBALT_H
@@ -21,13 +22,16 @@
  * predefined list, defined at compile time. The words are null-separated, and
  * the entire list is null-terminated.
  *
- * WORDTABLE_LEN is the length of the entire WORDTABLE array, excluding the
- * final null byte.
+ * WORDTABLE_LEN is the length of the entire WORDTABLE array, including the
+ * final null byte. WORDTABLE_STRLEN is the length of WORDTABLE, excluding the
+ * final null byte. I.e., WORDTABLE_STRLEN is the maximum valid index that can
+ * be used to access WORDTABLE.
  *
  * NUMBER_OF_WORDS is the number of words in the table.
  */
-extern const char *WORDTABLE;
+extern const unsigned char WORDTABLE[];
 extern const size_t WORDTABLE_LEN;
+extern const size_t WORDTABLE_STRLEN;
 extern const uint16_t NUMBER_OF_WORDS;
 
 /* 
@@ -44,7 +48,7 @@ extern const uint16_t NUMBER_OF_WORDS;
  * 256 reserved elements.
  */
 extern const uint32_t WORDMAP[];
-extern const uint16_t WORDMAP_LEN;
+extern const size_t WORDMAP_LEN;
 
 /*
  * GUIDETABLE is an array of 16-bit unsigned integers that store indexes within
@@ -69,6 +73,7 @@ extern const uint16_t WORDMAP_LEN;
  * number of the last word in the list.
  */
 extern const uint16_t GUIDETABLE[];
+extern const size_t GUIDETABLE_LEN;
 
 /* 
  * cblt_streq takes two null-terminated strings as arguments and returns true

@@ -1,22 +1,30 @@
 #cmake_minimum_required(VERSION 3.21.4)
 project(libcobalt_plaintext)
-message("plaintext is being built")
+#message("plaintext is being built")
+
 add_executable(sort_wordlist sort_wordlist.c)
 
-add_custom_target(50k-newline-separated.txt
+add_custom_target(wordlist
 	COMMAND python3 uncomment.py
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_custom_target(50k-newline-separated-sorted.txt
+
+add_custom_target(wordlist_sorted
 	COMMAND sort_wordlist
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS 50k-newline-separated.txt sort_wordlist
-)
+	DEPENDS wordlist sort_wordlist)
 
-message("building wordtable.h")
-add_custom_target(wordtable.h ALL
-	COMMAND python3 convert_to_c.py
+add_custom_command(
+	OUTPUT wordtable.bin ${CMAKE_SOURCE_DIR}/src/globals/sizes.c
+	COMMAND python3 newline_to_null.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	DEPENDS 50k-newline-separated-sorted.txt
-)
+	DEPENDS wordlist_sorted)
+add_custom_target(generate_wordtable
+	DEPENDS wordtable.bin)
+add_custom_target(sizes
+	DEPENDS ${CMAKE_SOURCE_DIR}/src/globals/sizes.c)
+
+add_custom_target(wordtable
+	COMMAND c_hexdump 1 wordtable.bin ${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+	DEPENDS generate_wordtable c_hexdump)

@@ -7,13 +7,8 @@
  * the entire word list)
  */
 
-#include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-#include "wordtable.h"
-#include "wordmap.h"
-#include "guidetable.h"
 
 #include "cobalt.h"
 
@@ -49,9 +44,9 @@ int32_t cblt_findWord(const char *str) {
 	uint16_t buf;
 	uint16_t word;
 
-	/* Empty strings will break this function. */
+	/* Empty strings would break this function. */
 	if (str[0] == '\0') {
-		/* Not anymore. */
+		/* Except they don't. */
 		return CBLT_EMPTY_WORD_ARG;
 	}
 	

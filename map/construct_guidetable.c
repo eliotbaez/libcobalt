@@ -10,8 +10,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "wordtable.h"
-#include "wordmap.h"
+#include "cobalt.h"
 
 #define GUIDETABLE_NAME	"guidetable.bin"
 

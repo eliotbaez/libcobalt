@@ -5,6 +5,11 @@
  * This program opens the already uncommented wordlist file and sorts its
  * contents into a new file. The sorting is done by way of the magic comparison
  * function described below.
+ * 
+ * TODO:
+ * It is notable that this program doesn't need to be told how many words are in
+ * the list it is sorting. This means it's a good candidate to use command line
+ * arguments instead of hard-coding input and output filenames.
  */
 
 #include <stdio.h>

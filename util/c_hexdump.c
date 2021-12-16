@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 	width = strtol(argv[1], NULL, 10);
 	switch (width) {
 	case 1:
-		typename = "uint8_t";
+		typename = "unsigned char";
 		printFunc = fprintu8;
 		break;
 	case 2:
@@ -141,10 +141,8 @@ int main(int argc, char **argv) {
 
 	/* now we can do all our printing shenanigans */
 	fprintf(fp, "#include <stdint.h>\n\n"
-			"#ifndef %s_H\n"
-			"#define %s_H\n\n"
 			"const %s %s[] = {\n",
-			argv[2], argv[2], typename, argv[2]);
+			typename, argv[2]);
 	
 	/* this ensures that the last set of n or less integers always get
 	   special treatment */
@@ -166,10 +164,7 @@ int main(int argc, char **argv) {
 		fputs(", ", fp);
 	}
 	printFunc(fp, buf, i);
-	fprintf(fp, "\n"
-			"};\n\n"
-			"#endif\t/* %s_H */\n",
-			argv[2]);
+	fprintf(fp, "\n};");
 
 	fprintf(stderr, "%s: Done.\n", argv[0]);
 

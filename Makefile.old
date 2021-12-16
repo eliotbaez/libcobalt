@@ -6,14 +6,14 @@ PREFIX=/usr/local
 CC = gcc
 RM = rm
 
-lib/libcobalt.so: src/findword.c src/sentence.c src/blocksize.c src/wordtable.h src/wordmap.h src/guidetable.h
+lib/libcobalt.so: src/findword.c src/sentence.c src/blocksize.c src/globals/wordtable.c src/globals/wordmap.c src/globals/guidetable.c
 	@mkdir -p lib/
 	$(CC) -I include/ -o lib/libcobalt.so -shared -fPIC src/findword.c src/sentence.c src/blocksize.c
 
-map/construct_guidetable: map/construct_guidetable.c src/wordmap.h src/wordtable.h
-	$(CC) -I src/ -o map/construct_guidetable map/construct_guidetable.c
-map/construct_map: map/construct_map.c src/wordtable.h
-	$(CC) -I src/ -o map/construct_map map/construct_map.c
+map/construct_guidetable: map/construct_guidetable.c src/globals/wordmap.c src/globals/wordtable.c
+	$(CC) -I include/ -I src/globals/ -o map/construct_guidetable map/construct_guidetable.c src/globals/wordmap.c src/globals/wordtable.c
+map/construct_map: map/construct_map.c src/globals/wordtable.c
+	$(CC) -I src/ -I include/ -o map/construct_map map/construct_map.c src/globals/wordtable.c
 map/guidetable.bin: map/construct_guidetable
 	cd map && ./construct_guidetable
 map/uint32_array_to_c: map/uint32_array_to_c.c
@@ -28,12 +28,13 @@ plaintext/50k-newline-separated.txt: plaintext/uncomment.py
 plaintext/50k-newline-separated-sorted.txt: plaintext/sort_wordlist plaintext/50k-newline-separated.txt
 	cd plaintext && ./sort_wordlist
 
-src/guidetable.h: map/guidetable.bin util/c_hexdump
-	cd map && ../util/c_hexdump 2 guidetable.bin ../src/guidetable.h
-src/wordmap.h: map/wordmap.bin util/c_hexdump
-	cd map && ../util/c_hexdump 4 wordmap.bin ../src/wordmap.h
-src/wordtable.h: plaintext/convert_to_c.py plaintext/50k-newline-separated-sorted.txt
-	cd plaintext && python3 convert_to_c.py
+src/globals/guidetable.c: map/guidetable.bin util/c_hexdump
+	cd map && ../util/c_hexdump 2 guidetable.bin ../src/globals/guidetable.c
+src/globals/wordmap.c: map/wordmap.bin util/c_hexdump
+	cd map && ../util/c_hexdump 4 wordmap.bin ../src/globals/wordmap.c
+src/globals/wordtable.c: plaintext/convert_to_c.py plaintext/50k-newline-separated-sorted.txt
+#	cd plaintext && python3 convert_to_c.py
+	cd plaintext && .../util/c_hexdump 1 wordtable.bin ../src/globals/wordtable.c
 
 util/c_hexdump: util/c_hexdump.c
 	$(CC) -o util/c_hexdump util/c_hexdump.c
@@ -64,5 +65,5 @@ clean-all: clean
 	$(RM) -f lib/libcobalt.so
 	$(RM) -f map/construct_map map/construct_guidetable
 	$(RM) -f plaintext/sort_wordlist
-	$(RM) -f src/guidetable.h src/wordmap.h src/wordtable.h
+	$(RM) -f src/globals/guidetable.c src/globals/wordmap.c src/globals/wordtable.c
 	$(RM) -f util/c_hexdump

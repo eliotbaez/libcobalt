@@ -9,45 +9,40 @@ project(libcobalt
 	LANGUAGES C
 )
 
+add_subdirectory(util)
+add_subdirectory(plaintext)
+add_subdirectory(map)
+
 # this is our main target
 add_library(cobalt SHARED
-	src/blocksize.c
-	src/findword.c
-	src/sentence.c
+	${CMAKE_SOURCE_DIR}/src/findword.c
+	${CMAKE_SOURCE_DIR}/src/sentence.c
+	${CMAKE_SOURCE_DIR}/src/blocksize.c
+	${CMAKE_SOURCE_DIR}/src/globals/sizes.c
+	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	${CMAKE_SOURCE_DIR}/src/globals/wordmap.c
+	${CMAKE_SOURCE_DIR}/src/globals/guidetable.c)
+
+set_source_files_properties(
+	src/globals/sizes.c
+	src/globals/wordtable.c
+	src/globals/wordmap.c
+	src/globals/guidetable.c
+	PROPERTIES GENERATED TRUE
 )
 
 set_target_properties(cobalt PROPERTIES
-	PUBLIC_HEADER include/cobalt.h
-)
-
+	PUBLIC_HEADER include/cobalt.h)
+add_dependencies(cobalt
+	sizes
+	wordtable
+	wordmap
+	guidetable)
 target_include_directories(cobalt PRIVATE include)
-target_include_directories(cobalt PRIVATE src)
+# target_include_directories(cobalt PRIVATE src)
 
 include(GNUInstallDirs)
 install(TARGETS cobalt
 	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-add_dependencies(cobalt
-	wordtable.h
-	wordmap.h
-	guidetable.h
-)
-
-
-add_subdirectory(plaintext)
-add_subdirectory(util)
-add_subdirectory(map)
-#target_link_libraries(cobalt util)
-#target_link_libraries(cobalt plaintext)
-#target_link_libraries(cobalt map)
-
-#add_dependencies(cobalt 
-	#plaintext
-	#util
-	#map
-	#)
-
-
+	PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
