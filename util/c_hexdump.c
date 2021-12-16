@@ -112,8 +112,6 @@ int main(int argc, char **argv) {
 		return EXIT_FAILURE;
 	}
 
-	
-
 	/* find size of the file */
 	fseek(fp, 0, SEEK_END);
 	size = ftell(fp) / width;
@@ -141,7 +139,8 @@ int main(int argc, char **argv) {
 	filenameMagic(argv[2]);
 
 	/* now we can do all our printing shenanigans */
-	fprintf(fp, "#include <stdint.h>\n\n"
+	fprintf(fp, "#include <stdint.h>\n"
+			"#include <stddef.h>\n\n"
 			"const %s %s[] = {\n",
 			typename, argv[2]);
 	
