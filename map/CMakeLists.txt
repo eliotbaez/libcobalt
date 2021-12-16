@@ -47,7 +47,12 @@ add_custom_target(guidetable
 	DEPENDS generate_guidetable c_hexdump wordmap)
 
 set_source_files_properties(
-	${CMAKE_SOURCE_DIR}/src/globals/sizes.c
-	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	${CMAKE_CURRENT_SOURCE_DIR}/wordmap.bin
+	${CMAKE_CURRENT_SOURCE_DIR}/guidetable.bin
 	${CMAKE_SOURCE_DIR}/src/globals/wordmap.c
-	PROPERTIES GENERATED TRUE)
+	${CMAKE_SOURCE_DIR}/src/globals/guidetable.c
+	# these 2 from another directory:
+	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	${CMAKE_SOURCE_DIR}/src/globals/sizes.c
+	PROPERTIES
+	GENERATED TRUE)

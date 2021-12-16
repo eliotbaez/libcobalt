@@ -8,7 +8,6 @@ add_custom_target(wordlist
 	COMMAND python3 uncomment.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-
 add_custom_target(wordlist_sorted
 	COMMAND sort_wordlist
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -28,3 +27,12 @@ add_custom_target(wordtable
 	COMMAND c_hexdump 1 wordtable.bin ${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 	DEPENDS generate_wordtable c_hexdump)
+
+set_source_files_properties(
+	${CMAKE_CURRENT_SOURCE_DIR}/50k-newline-separated.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/50k-newline-separated-sorted.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/wordtable.bin
+	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
+	${CMAKE_SOURCE_DIR}/src/globals/sizes.c
+	PROPERTIES
+	GENERATED TRUE)

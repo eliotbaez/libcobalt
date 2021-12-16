@@ -9,6 +9,9 @@ project(libcobalt
 	LANGUAGES C
 )
 
+# TODO:
+# Add a way to configure which file will be used as the core word list!
+
 add_subdirectory(util)
 add_subdirectory(plaintext)
 add_subdirectory(map)
@@ -28,8 +31,8 @@ set_source_files_properties(
 	src/globals/wordtable.c
 	src/globals/wordmap.c
 	src/globals/guidetable.c
-	PROPERTIES GENERATED TRUE
-)
+	PROPERTIES
+	GENERATED TRUE)
 
 set_target_properties(cobalt PROPERTIES
 	PUBLIC_HEADER include/cobalt.h)
