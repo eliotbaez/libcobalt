@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 	size_t i;	/* counting variable for unit test stuff at the end */
 	FILE *out;
 
-	out = fopen("guidetable.bin", "w");
+	out = fopen("guidetable.bin", "wb");
 	if (out == NULL) {
 		fprintf(stderr, "%s: Error opening file %s\n", argv[0], GUIDETABLE_NAME);
 		return EXIT_FAILURE;

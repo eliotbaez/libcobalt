@@ -21,7 +21,7 @@ int main (int argc, char **argv) {
 	uint32_t *wordMap;
 	FILE *out;
 
-	out = fopen(MAP_NAME, "w");
+	out = fopen(MAP_NAME, "wb");
 	if (out == NULL) {
 		fprintf(stderr, "%s: Error opening file %s.\n", argv[0], MAP_NAME);
 		return EXIT_FAILURE;
