@@ -165,7 +165,9 @@ int main(int argc, char **argv) {
 		fputs(", ", fp);
 	}
 	printFunc(fp, buf, i);
-	fprintf(fp, "\n};");
+	fprintf(fp, "\n};\n\n"
+			"const size_t %s_LEN = %zd;",
+			argv[2], size);
 
 	fprintf(stderr, "%s: Done.\n", argv[0]);
 
