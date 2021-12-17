@@ -15,6 +15,7 @@ project(libcobalt
 add_subdirectory(util)
 add_subdirectory(plaintext)
 add_subdirectory(map)
+#add_subdirectory(examples)
 
 # this is our main target
 add_library(cobalt SHARED

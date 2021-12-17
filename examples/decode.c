@@ -18,7 +18,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "cobalt.h"
+#include <cobalt.h>
 
 int main(int argc, char **argv) {
 	size_t sz;
