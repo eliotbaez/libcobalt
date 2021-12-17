@@ -3,42 +3,35 @@
 CObaLT is a text-compression library that uses a lookup table to compress text
 on a word-by-word basis.
 
-## Building
+## Installing
 
 ### Linux
 
-On Linux-based systems, building is as easy as running `make` or `make default`
-on your command line at the root directory. Optionally, run `make clean`
-afterward to get rid of some unnecessary intermediate files.
+Installing on Linux and other unix-like systems is fairly straightforward.
+Before proceeding, make sure you have both `make` and `CMake` installed. You may
+need root privileges to fully install the library.
 
 ```sh
-make -f Makefile.old default
-make -f Makefile.old clean
+mkdir build && cd build
+cmake ..
+make
+make install
 ```
 
-### Windows or Linux (experimental)
+### Windows
 
-We're currently experimenting with using CMake to streamline the build process.
-On Windows or Linux, run the following commands in your terminal where you have
-access to the necessary build tools, like `CMake` and your C compiler.
+On Windows, run the following commands in your terminal where you have access
+to the necessary build tools, like `CMake` and your C compiler. 
 
 ```sh
 mkdir build
 cd build
 cmake ..
+cmake --build .
 ```
 
-On Linux, run `make` immediately once that's done. On Windows, good luck.
-
-## Installing
-
-The default installation path is in `/usr/local`. This can be configured
-directly inside `Makefile`. Root permissions are required to install to
-`/usr/local.`
-
-```sh
-sudo make install
-```
+If you find the best way to install the library to your system, please add that
+information to this document.
 
 ## How it Works
 
