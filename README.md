@@ -101,5 +101,29 @@ null-separated.
 
 ### The GUIDETABLE Array
 
-I'm tired right now. I'll finish writing this documentation when I wake up
-tomorrow.
+`GUIDETABLE` is an arary of 16-bit integers that functions as the hash table for
+words with respect to the first 2 characters of the word (See [The Sorting
+Algorithm](#the-sorting-algorithm) above). `GUIDETABLE` exists to expedite the
+process of finding words in the word table. For a more detailed explanation of
+how CObaLT finds a word in the word table, see the definition of
+`cblt_findWord()` in `src/findword.c`.
+
+The elements in `GUIDETABLE` are organized in such away that the nth element of
+`GUIDETABLE` is the index of the **first word** in WORDMAP whose first 2
+characters, when concatenated, are equal to n. Using the same "the" example from
+above, an example of using `GUIDETABLE` to help locate a word would be:
+
+```c
+uint16_t first2chars = 0x7468;
+uint16_t searchStartPoint = GUIDETABLE[first2chars];
+const char *firstMatch = WORDMAP[searchStartPoint];
+/* firstMatch is now the index of the first word in WORDTABLE whose first 2
+   characters are equal to "th". */
+```
+
+In this case, if the words in WORDTABLE are arranged in descending order of
+frequency, `firstMatch` would point to the word "the". However, this will not
+always be the case for all words, which is why it is important to keep searching
+through the words in WORDTABLE until a true match is found. The use of
+GUIDETABLE just allows us to skip past thousands of words with an O(1) time
+complexity.
