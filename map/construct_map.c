@@ -3,17 +3,17 @@
  * by Eliot Baez
  *
  * This is a helper program to index all the different words in the word table
- * by the index of the word and its offset in the data block.
+ * by the index of the word and its offset in the WORDTABLE array.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "wordtable.h"
 
-#ifndef MAP_NAME
+#include "cobalt.h"
+
 #define MAP_NAME "wordmap.bin"
-#endif
+#define WORDMAP_LEN NUMBER_OF_WORDS + 256
 
 int main (int argc, char **argv) {
 	size_t i; /* offset within the WORDTABLE char array */
@@ -21,7 +21,7 @@ int main (int argc, char **argv) {
 	uint32_t *wordMap;
 	FILE *out;
 
-	out = fopen(MAP_NAME, "w");
+	out = fopen(MAP_NAME, "wb");
 	if (out == NULL) {
 		fprintf(stderr, "%s: Error opening file %s.\n", argv[0], MAP_NAME);
 		return EXIT_FAILURE;
@@ -44,9 +44,9 @@ int main (int argc, char **argv) {
 	fprintf(stderr, "%s: Writing word map to %s\n", argv[0], MAP_NAME);
 	/* start by filling the first 256 addresses */
 	for (word = 0; word < 0x100; ++word)
-		wordMap[word] = WORDTABLE_LEN;
+		wordMap[word] = WORDTABLE_STRLEN;
 
-	for (i = 0; i < WORDTABLE_LEN; ) { /* each byte in WORDTABLE */
+	for (i = 0; i < WORDTABLE_STRLEN; ) { /* each byte in WORDTABLE */
 		wordMap[word++] = i;
 		/* advance to the next word */
 		while (WORDTABLE[i++] != '\0') ;

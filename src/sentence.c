@@ -6,7 +6,7 @@
  * decoding whole sentences.
  */
 
-#include <stdlib.h>	/* malloc */
+#include <stdlib.h>	/* malloc, size_t */
 #include <string.h>	/* strtok, strlen, memcpy */
 #include <stdint.h>	/* uint16_t, int32_t */
 #include <stdio.h>

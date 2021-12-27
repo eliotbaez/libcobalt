@@ -9,8 +9,10 @@
  * can fully understand the magic in the glibc implementation of strlen() first.
  */
 
-#include <stdlib.h>
+#include <stddef.h>
 #include <stdint.h>
+
+#include "cobalt.h"
 
 /* I don't know whether I should be proud of disappointed of this function. */
 size_t cblt_getUint16BlockSize(const uint16_t *block) {

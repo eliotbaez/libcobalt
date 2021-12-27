@@ -36,7 +36,7 @@ int fprintu32(FILE *fp, void *uint32ptr, size_t index) {
 }
 
 int fprintu64(FILE *fp, void *uint64ptr, size_t index) {
-	return fprintf(fp, "0x%016lx", *( (uint64_t *)uint64ptr + index ));
+	return fprintf(fp, "0x%016llx", *( (uint64_t *)uint64ptr + index ));
 }
 
 /* filename magic - end the string at the first dot unless the file name begins
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 	width = strtol(argv[1], NULL, 10);
 	switch (width) {
 	case 1:
-		typename = "uint8_t";
+		typename = "unsigned char";
 		printFunc = fprintu8;
 		break;
 	case 2:
@@ -112,11 +112,10 @@ int main(int argc, char **argv) {
 		return EXIT_FAILURE;
 	}
 
-	
-
 	/* find size of the file */
 	fseek(fp, 0, SEEK_END);
 	size = ftell(fp) / width;
+	fprintf(stderr, "%s: Read %zd items of size %hhd.\n", argv[0], size, width);
 	rewind(fp);
 	
 	/* allocate some memory */
@@ -140,11 +139,10 @@ int main(int argc, char **argv) {
 	filenameMagic(argv[2]);
 
 	/* now we can do all our printing shenanigans */
-	fprintf(fp, "#include <stdint.h>\n\n"
-			"#ifndef %s_H\n"
-			"#define %s_H\n\n"
+	fprintf(fp, "#include <stdint.h>\n"
+			"#include <stddef.h>\n\n"
 			"const %s %s[] = {\n",
-			argv[2], argv[2], typename, argv[2]);
+			typename, argv[2]);
 	
 	/* this ensures that the last set of n or less integers always get
 	   special treatment */
@@ -166,10 +164,9 @@ int main(int argc, char **argv) {
 		fputs(", ", fp);
 	}
 	printFunc(fp, buf, i);
-	fprintf(fp, "\n"
-			"};\n\n"
-			"#endif\t/* %s_H */\n",
-			argv[2]);
+	fprintf(fp, "\n};\n\n"
+			"const size_t %s_LEN = %zd;",
+			argv[2], size);
 
 	fprintf(stderr, "%s: Done.\n", argv[0]);
 

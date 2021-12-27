@@ -5,6 +5,11 @@
  * This program opens the already uncommented wordlist file and sorts its
  * contents into a new file. The sorting is done by way of the magic comparison
  * function described below.
+ * 
+ * TODO:
+ * It is notable that this program doesn't need to be told how many words are in
+ * the list it is sorting. This means it's a good candidate to use command line
+ * arguments instead of hard-coding input and output filenames.
  */
 
 #include <stdio.h>
@@ -47,7 +52,7 @@ int main (int argc, char **argv) {
 	char **substrings;	/* array of null terminated words */
 	FILE *fp;		/* take a guess */
 
-	fp = fopen(WORDLIST_NAME, "r");
+	fp = fopen(WORDLIST_NAME, "rb");
 	if (fp == NULL) {
 		fprintf(stderr, "%s: Error opening file %s.\n", argv[0], WORDLIST_NAME);
 		return EXIT_FAILURE;
@@ -112,7 +117,7 @@ int main (int argc, char **argv) {
 		sortedBuf[i++] = '\n';	/* make the null byte a newline */
 	}
 	
-	fp = fopen(WORDLIST_SORTED_NAME, "w");
+	fp = fopen(WORDLIST_SORTED_NAME, "wb");
 	if (fp == NULL) {
 		fprintf(stderr, "%s: Error opening file %s.\n", argv[0], WORDLIST_NAME);
 		free(substrings);
@@ -128,6 +133,7 @@ int main (int argc, char **argv) {
 
 	free(sortedBuf);
 	free(substrings);
+	free(buf);
 
 	fprintf(stderr, "%s: Done.\n", argv[0]);
 	return 0;
