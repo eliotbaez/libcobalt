@@ -88,10 +88,19 @@ int cblt_splitstr(const char *s, char const **ppcurrent, char const **ppnext) {
 		pcurrent = pnext;
 		currentStatus = nextStatus;
 
-		if (currentStatus == Space) {
+		/* skip ahead 1 space */
+		if (currentStatus == Space && 0) {
 			++pcurrent;
 			++pnext;
 			currentStatus = cblt_getCharStatus(*pcurrent);
+			
+			/* explicitly interpret a space character if there is a single
+			   trailing space in the string */
+			if (currentStatus == EndOfString) {
+				*ppcurrent = pcurrent - 1;
+				*ppnext = pcurrent;
+				return Space;
+			}
 		}
 	} else {
 		/* only if this is the first time operating on s */
