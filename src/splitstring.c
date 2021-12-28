@@ -107,9 +107,11 @@ int cblt_splitstr(const char *s, char const **ppcurrent, char const **ppnext) {
 		pcurrent = s;
 		pnext = s;
 
-		if (*s == '\0')
+		if (*s == '\0') {
+			*ppcurrent = pcurrent;
+			*ppnext = pnext;
 			return EndOfString;
-
+		}
 		/* find current status */
 		currentStatus = cblt_getCharStatus(*pcurrent);
 	}
