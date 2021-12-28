@@ -7,8 +7,9 @@
  */
 
 #include <stdlib.h>	/* malloc, size_t */
-#include <string.h>	/* strtok, strlen, memcpy */
+#include <string.h>	/* strtok, strlen, memcpy, strchr */
 #include <stdint.h>	/* uint16_t, int32_t */
+#include <ctype.h>	/* isalnum, isalpha */
 #include <stdio.h>
 
 #include "cobalt.h"

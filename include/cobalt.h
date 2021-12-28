@@ -90,6 +90,12 @@ extern const size_t GUIDETABLE_LEN;
 bool cblt_streq(const char *str1, const char *str2);
 
 /*
+ * TODO:
+ * add a description here
+ */
+int cblt_splitstr(const char *s, char const **current, char const **next);
+
+/*
  * cblt_findWord searches for str in the word table and returns the ordinal
  * number of the first word that matches str. Returns -1 if the string is not
  * found and -2 if passed an empty string.
