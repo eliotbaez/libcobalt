@@ -12,10 +12,32 @@
 #include "cobalt.h"
 #include "splitstring.h"
 
+/* 
+ * This helper function gets the name corresponding to the result of 
+ * cblt_getCharStatus(). It is not compiled into libcobalt, and only exists
+ * for testing and debugging purposes.
+ */
+const char *cblt_getStatusName(int status) {
+    switch(status) {
+    case Word:
+        return "Word";
+    case Space:
+        return "Space";
+    case Punctuation:
+        return "Punctuation";
+    case EndOfString:
+        return "EndOfString";
+    default:
+        return "Unassigned";
+    }
+}
+
 /* This function is gonna get called a lot. For nearly every character in the
-   string, in fact. It is defined as inline in case the compiler lets us
-   sacrifice some program space for time saved by not using function overhead. */
-static inline int cblt_getCharStatus(char c) {
+   string, in fact. 
+   TODO: 
+   Find a way to define this function as inline to allow the compiler to
+   probably optimize the function. */
+int cblt_getCharStatus(unsigned char c) {
 	if (c == ' ')
 		return Space;
 	if (c == '\0')

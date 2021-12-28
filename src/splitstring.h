@@ -1,4 +1,13 @@
 /*
+ * splitstring.h
+ *
+ * Contains declarations of functions defined in and definitions of 
+ * enumerations used in splitstring.c
+ */
+#ifndef SPLITSTRING_H
+#define SPLITSTRING_H
+
+/*
  * This enum defines the possible return values of cblt_strsplit().
  * 
  * Word:		Current substring is a word
@@ -7,9 +16,6 @@
  * 				either side
  * EndOfString:	Current substring is the null byte at the end of the string
  */
-
-#ifndef SPLITSTRING_H
-#define SPLITSTRING_H
 
 enum substringStatus{
 	Unassigned = 0,
@@ -20,5 +26,9 @@ enum substringStatus{
 };
 
 int cblt_splitstr(const char *s, char const **ppcurrent, char const **ppnext);
+
+int cblt_getCharStatus(unsigned char c);
+
+const char *cblt_getStatusName(int status);
 
 #endif /* SPLITSTRING_H */
