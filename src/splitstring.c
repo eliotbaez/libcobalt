@@ -93,36 +93,6 @@ int cblt_splitstr(const char *s, char const **ppcurrent, char const **ppnext) {
 			++pnext;
 			currentStatus = cblt_getCharStatus(*pcurrent);
 		}
-		
-		switch(currentStatus) {
-		case Space:
-			while (cblt_getCharStatus(*pnext) == currentStatus) {
-				++pnext;	/* next char... */
-			}
-
-			nextStatus = cblt_getCharStatus(*pnext);
-			*ppcurrent = pcurrent;
-			*ppnext = pnext;
-			return currentStatus;
-		case Word:
-			while (cblt_getCharStatus(*pnext) == currentStatus) {
-				++pnext;	/* next char... */
-			}
-
-			nextStatus = cblt_getCharStatus(*pnext);
-			*ppcurrent = pcurrent;
-			*ppnext = pnext;
-			return currentStatus;
-		case Punctuation:
-			while (cblt_getCharStatus(*pnext) == currentStatus) {
-				++pnext;	/* next char... */
-			}
-
-			nextStatus = cblt_getCharStatus(*pnext);
-			*ppcurrent = pcurrent;
-			*ppnext = pnext;
-			return currentStatus;
-		}
 	} else {
 		/* only if this is the first time operating on s */
 		pcurrent = s;
@@ -133,16 +103,15 @@ int cblt_splitstr(const char *s, char const **ppcurrent, char const **ppnext) {
 
 		/* find current status */
 		currentStatus = cblt_getCharStatus(*pcurrent);
-		/* move *next to beginning of next substring */
-		while (cblt_getCharStatus(*pnext) == currentStatus) {
-			++pnext;	/* next char... */
-		}
-
-		nextStatus = cblt_getCharStatus(*pnext);
-		*ppcurrent = pcurrent;
-		*ppnext = pnext;
-		return currentStatus;
 	}
 
-	return 0;
+	/* move *next to beginning of next substring */
+	while (cblt_getCharStatus(*pnext) == currentStatus) {
+		++pnext;	/* next char... */
+	}
+
+	nextStatus = cblt_getCharStatus(*pnext);
+	*ppcurrent = pcurrent;
+	*ppnext = pnext;
+	return currentStatus;
 }

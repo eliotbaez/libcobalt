@@ -16,7 +16,6 @@
  * 				either side
  * EndOfString:	Current substring is the null byte at the end of the string
  */
-
 enum substringStatus{
 	Unassigned = 0,
 	Word,
