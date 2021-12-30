@@ -17,35 +17,30 @@
 #include "splitstring.h"
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "%s requires one argument.\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-    
-    //char buf;
-    char *current, *next;
-    int status;
-    int i = 0;
+	char *group;
+	int
+		currentStatus,
+		nextStatus;
+	int i = 0;
 
-    printf("%s\n", argv[1]);
-    
-    status = cblt_splitstr(argv[1], (const char **)&current, (const char **)&next);
-    printf("group %d is \"", i++);
-    fwrite(current, 1, next - current, stdout);
-    printf("\"\n  type is ");
-    puts(cblt_getStatusName(status));
-    printf("  current at index %2zd: 0x%02hhx '%c'\n", current - argv[1], *current, *current);
-    printf("  next at index    %2zd: 0x%02hhx '%c'\n", next - argv[1], *next, *next);
+	if (argc != 2) {
+		fprintf(stderr, "%s requires one argument.\n", argv[0]);
+		return EXIT_FAILURE;
+	}
+	
+	printf("%s\n", argv[1]);
+	
+	group = cblt_splitstr(argv[1], &currentStatus, &nextStatus);
+	printf("group %2d at index %2zd is \"%s\"\n", i++, group - argv[0], group);
+	printf("  current type is %s\n", cblt_getStatusName(currentStatus));
+	printf("  next type is    %s\n", cblt_getStatusName(nextStatus));
 
-    while (status != EndOfString) {
-        status = cblt_splitstr(NULL, (const char **)&current, (const char **)&next);
-        printf("group %d is \"", i++);
-        fwrite(current, 1, next - current, stdout);
-        printf("\"\n  type is ");
-        puts(cblt_getStatusName(status));
-        printf("  current at index %2zd: 0x%02hhx '%c'\n", current - argv[1], *current, *current);
-        printf("  next at index    %2zd: 0x%02hhx '%c'\n", next - argv[1], *next, *next);
-    }
+	while (currentStatus != EndOfString) {
+		group = cblt_splitstr(NULL, &currentStatus, &nextStatus);
+		printf("group %2d at index %2zd is \"%s\"\n", i++, group - argv[0], group);
+		printf("  current type is %s\n", cblt_getStatusName(currentStatus));
+		printf("  next type is    %s\n", cblt_getStatusName(nextStatus));
+	}
 
-    return 0;
+	return 0;
 }
