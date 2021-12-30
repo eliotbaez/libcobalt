@@ -22,6 +22,7 @@ add_library(cobalt SHARED
 	${CMAKE_SOURCE_DIR}/src/findword.c
 	${CMAKE_SOURCE_DIR}/src/sentence.c
 	${CMAKE_SOURCE_DIR}/src/blocksize.c
+	${CMAKE_SOURCE_DIR}/src/splitstring.c
 	${CMAKE_SOURCE_DIR}/src/globals/sizes.c
 	${CMAKE_SOURCE_DIR}/src/globals/wordtable.c
 	${CMAKE_SOURCE_DIR}/src/globals/wordmap.c

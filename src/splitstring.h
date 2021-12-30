@@ -24,7 +24,7 @@ enum substringStatus{
 	EndOfString
 };
 
-int cblt_splitstr(const char *s, char const **ppcurrent, char const **ppnext);
+char *cblt_splitstr(char *s, int *pcurrentStatus, int *pnextStatus);
 
 int cblt_getCharStatus(unsigned char c);
 

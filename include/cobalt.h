@@ -93,7 +93,7 @@ bool cblt_streq(const char *str1, const char *str2);
  * TODO:
  * add a description here
  */
-int cblt_splitstr(const char *s, char const **current, char const **next);
+char *cblt_splitstr(char *s, int *pcurrentStatus, int *pnextStatus);
 
 /*
  * cblt_findWord searches for str in the word table and returns the ordinal
@@ -115,9 +115,12 @@ int32_t cblt_findWord(const char *str);
  * character array.
  * 
  * Since spaces are very common in sentences, they are interpreted as the
- * delimiter character when encoding and decoding. 
+ * delimiter character when encoding and decoding. An integer with the value
+ * CBLT_NO_SPACE indicates that the space that would normally follow the last
+ * character of the previous character group is absent.
  */
 #define CBLT_BEGIN_STRING	0xFFFF
+#define CBLT_NO_SPACE       0xFFFE
 
 /*
  * cblt_encodeSentence takes a single null-terminated sentence as an argument
@@ -133,8 +136,14 @@ int32_t cblt_findWord(const char *str);
  *
  * If passed an empty string, the function will return a pointer to a 16-bit
  * unsigned integer with the value 0.
+ * 
+ * cblt_getEncodedLength takes a sentence to be encoded as its argument, and
+ * returns the length in elements of the block of 16-bit unsigned integers
+ * necessary to store the string when encoded. This function will return 0 upon
+ * failure.
  */
 uint16_t *cblt_encodeSentence(const char *sentence);
+size_t cblt_getEncodedLength(const char *sentence);
 
 /*
  * cblt_decodeSentence takes a single null-terminated array of 16-bit unsigned

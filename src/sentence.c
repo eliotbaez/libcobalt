@@ -13,8 +13,117 @@
 #include <stdio.h>
 
 #include "cobalt.h"
+#include "splitstring.h"
 
 /* this is where the magic happens >:) */
+
+/* copies NC characters from S to DEST, casting from char to uint16_t for each
+   character; 1 char in S translates to 1 uint16_t in DEST */
+static void cblt_copyCharToUint16(const char *s, uint16_t *dest, size_t nc) {
+	size_t i = 0;
+	for ( ; i < nc; ++i)
+		dest[i] = (uint16_t)s[i];
+}
+
+/* 
+ * Get the length in elements of the memory block necessary to hold the encoded
+ * version of sentence. INCLUDES the null terminating integer.
+ * 
+ * Returns a nonzero number on success.
+ */
+size_t cblt_getEncodedLength(const char *sentence) {
+	size_t length;			/* length of strings */
+	size_t encodedLength;	/* length of encoded integer block */
+	char *mSentence;		/* mutable copy of sentence */
+	char *group;			/* points to a group of characters */
+	enum substringStatus 
+		currentStatus,		/* the type of characters stored in group */
+		nextStatus;			/* the type of characters following group */
+
+	if (sentence == NULL)
+		return 0;
+
+	/* We make a mutable copy of sentence because cblt_splitstr() overwrites
+	   modifies in its first argument. */
+	length = strlen(sentence);
+	mSentence = malloc(sizeof(char) * (length + 1));
+	if (mSentence == NULL)
+		return 0;
+	strcpy(mSentence, sentence);
+
+	/* use an approach similar to the decoding process to calculate how much
+	   memory will be needed to store the compressed data */
+	encodedLength = 1;
+
+	group = cblt_splitstr(mSentence, &currentStatus, &nextStatus);
+	switch (currentStatus) {
+	case Word:
+		if (cblt_findWord(group) != CBLT_WORD_NOT_FOUND) {
+			++encodedLength;
+		} else {
+			/* string literal injection */
+			/* Increment encodedLength by ceil(length / 2). Something
+				something, the fun way of doing ceiling division :^) 
+				We add 1 at the end because of the special 2-byte signal that
+				the following bytes are a string literal. */
+			length = strlen(group);
+			encodedLength += (length / 2 + (length % 2 != 0)) + 1;
+		}
+		break;
+	case Space:
+		encodedLength += strlen(group);
+		break;
+	case Punctuation:
+		encodedLength += strlen(group);
+		if (nextStatus == Word)
+			/* space omission signal */
+			++encodedLength;
+		break;
+	case EndOfString:
+		/* Do nothing; I just included this case to signify that I didn't forget
+		   to include it. */
+	}
+
+	while (currentStatus != EndOfString) {
+		group = cblt_splitstr(NULL, &currentStatus, &nextStatus);
+		switch (currentStatus) {
+		case Word:
+			if (cblt_findWord(group) != CBLT_WORD_NOT_FOUND) {
+				++encodedLength;
+			} else {
+				/* string literal injection */
+				length = strlen(group);
+				encodedLength += (length / 2 + (length % 2 != 0)) + 1;
+			}
+			break;
+		case Space:
+			/* TODO:
+			   possibly consider optimizing this case? */
+			if (nextStatus == Word) {
+				/* 1 space before words (except the first word) are implicit.
+				   All extra spaces are encoded by direct ASCII injection. */
+				encodedLength += strlen(group) - 1;
+			} else {
+				/* Punctuation and End of String */
+				/* All spaces before punctuation symbols, and all trailing
+				   spaces before the end of the string, must be explicit */
+				encodedLength += strlen(group);
+			}
+			break;
+		case Punctuation:
+			encodedLength += strlen(group);
+			if (nextStatus == Word)
+				/* space omission signal */
+				++encodedLength;
+			break;
+		case EndOfString:
+			/* Once again, do nothing. */
+		}
+	}
+
+	free(mSentence);
+	return encodedLength;
+}
 
 /*
  * This function takes a null-terminated string as input, interpreted as a
@@ -30,17 +139,22 @@
  * something meaningful with the output of this function.
  */
 uint16_t *cblt_encodeSentence(const char *sentence) {
+	size_t length;			/* stores the length of block of memory */
+
 	char *mSentence;		/* points to a mutable copy of sentence */
+	char *group;			/* points to a group of characters */
+	enum substringStatus 
+		currentStatus,		/* the type of characters stored in group */
+		nextStatus;			/* the type of characters following group */
+
 	uint16_t *compressed;	/* the compressed sentence */
-	size_t i;				/* index for compressed */
-	char *word;				/* points to a string that is a word */
+	size_t i = 0;			/* index for compressed */
 	int32_t wordNum;		/* stores result of cblt_findWord() */
-	size_t length;			/* stores the length of a string */
 
 	if (sentence == NULL)
 		return NULL;
 	
-	/* We make a mutable copy of sentence because strtok() overwrites
+	/* We make a mutable copy of sentence because cblt_splitstr() modifies
 	   characters in its first argument. */
 	length = strlen(sentence);
 	mSentence = malloc(sizeof(char) * (length + 1));
@@ -48,37 +162,103 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 		return NULL;
 	strcpy(mSentence, sentence);
 	
-	/* The compressed sentence will never have a length greater than twice the
-	   input string, so we will allocate enough memory for the worst case
-	   scenario. */
-	compressed = malloc(sizeof(uint16_t) * (2 * length + 1));
+	length = cblt_getEncodedLength(sentence);
+	compressed = malloc(sizeof(uint16_t) * (length));
 	if (compressed == NULL) {
 		free(mSentence);
 		return NULL;
 	}
 
-	for (i = 0, word = mSentence; ; word = NULL) {
-		word = strtok(word, " ");
-		if (word == NULL)
-			break;
-		
-		wordNum = cblt_findWord(word);
-		if (wordNum == CBLT_WORD_NOT_FOUND) {
+	/* special treatment for first character group */
+	group = cblt_splitstr(mSentence, &currentStatus, &nextStatus);
+	switch (currentStatus) {
+	case Word:
+		wordNum = cblt_findWord(group);
+		if (wordNum != CBLT_WORD_NOT_FOUND) {
+			compressed[i++] = (uint16_t)wordNum;
+		} else {
+			/* string literal injection */
 			compressed[i++] = CBLT_BEGIN_STRING;
-			/* In this case, length will include the null byte for
-			   practicality reasons */
-			length = strlen(word) + 1;
-			memcpy(&compressed[i], word, length);
+			/* In this case, length will include the null byte for practicality
+			   reasons */
+			length = strlen(group);
+			/* We fill this integer with all 1s, to avoid having an element be
+			   all zero from the string's null terminator. This would cause a
+			   premature termination of the integer block. 
+			   length is incremented afterward to allow us to use memset's speed
+			   over strcpy, as well as make the next calculation easier. */
+			compressed[i + length++ / 2] = 0xffff;
+			memcpy(&compressed[i], group, length);
 			/* Increment i by ceil(length / 2). Since there's no ceiling
 			   division operator for ints, we'll do this the fun way. */
 			i += (length / 2 + (length % 2 != 0));
-		} else {
-			compressed[i++] = (uint16_t)wordNum;
+		}
+		break;
+	case Space:
+		length = strlen(group);
+		cblt_copyCharToUint16(group, compressed + i, length);
+		i += length;
+		break;
+	case Punctuation:
+		length = strlen(group);
+		cblt_copyCharToUint16(group, compressed + i, length);
+		i += length;
+		if (nextStatus == Word)
+			/* space omission signal */
+			compressed[i++] = CBLT_NO_SPACE;
+		break;
+	case EndOfString:
+		/* Do nothing; I just included this case to signify that I didn't forget
+		   to include it. */
+	}
+
+	while (currentStatus != EndOfString) {
+		group = cblt_splitstr(NULL, &currentStatus, &nextStatus);
+		switch (currentStatus) {
+		case Word:
+			if (cblt_findWord(group) != CBLT_WORD_NOT_FOUND) {
+				compressed[i++] = (uint16_t)wordNum;
+			} else {
+				/* string literal injection */
+				compressed[i++] = CBLT_BEGIN_STRING;
+				length = strlen(group);
+				compressed[i + length++ / 2] = 0xffff;
+				memcpy(&compressed[i], group, length);
+				i += (length / 2 + (length % 2 != 0));
+			}
+			break;
+		case Space:
+			if (nextStatus == Word) {
+				/* 1 space before words (except the first word) are implicit.
+				   All extra spaces are encoded by direct ASCII injection. */
+				length = strlen(group) - 1;
+				if (length != 0)	/* save a few push and pop instructions */
+					cblt_copyCharToUint16(group, compressed + i, length);
+				i += length;
+			} else {
+				/* Punctuation and End of String */
+				/* All spaces before punctuation symbols, and all trailing
+				   spaces before the end of the string, must be explicit */
+				length = strlen(group);
+				cblt_copyCharToUint16(group, compressed + i, length);
+				i += length;
+			}
+			break;
+		case Punctuation:
+			length = strlen(group);
+			cblt_copyCharToUint16(group, compressed + i, length);
+			i += length;
+			if (nextStatus == Word)
+				/* space omission signal */
+				compressed[i++] = CBLT_NO_SPACE;
+			break;
+		case EndOfString:
+			/* Once again, do nothing. */
 		}
 	}
-	compressed[i] = 0;
-	free(mSentence);
 
+	compressed[i] = 0x0000;
+	free(mSentence);
 	return compressed;
 }
 
