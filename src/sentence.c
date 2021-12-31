@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include "cobalt.h"
+#include "sentence.h"
 #include "splitstring.h"
 
 /* this is where the magic happens >:) */
@@ -261,6 +262,75 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 	compressed[i] = 0x0000;
 	free(mSentence);
 	return compressed;
+}
+
+/*
+ * Returns the length of the decoded sentence contained by COMPRESSED, including
+ * the null terminator at the end of the string.
+ * 
+ * This function expects the input array to be perfectly formatted, with no
+ * invalid sequences of numbers.
+ */
+size_t cblt_getDecodedLength(const uint16_t *compressed) {
+	size_t length;			/* length of a word */
+	size_t decodedLength;	/* length of the output string */
+	unsigned words = 0;		/* number of actual words counted */
+	size_t i;				/* index for compressed */
+	
+	/* initialize to 1 to account for null terminator */
+	decodedLength = 1;
+	for (i = 0; compressed[i] != 0; ) {
+		if (compressed[i] < 0x100) {
+			/* direct byte injection */
+			++decodedLength;
+			++i;
+		} else if (compressed[i] < WORDMAP_LEN) {
+			/* valid words */
+			decodedLength += strlen( WORDTABLE + WORDMAP[compressed[i]] );
+			++i;
+			++words;
+		} else if (compressed[i] == CBLT_BEGIN_STRING) {
+			/* string literal */
+			/* increment i to skip past the CBLT_BEGIN_STRING signal */
+			++i;
+			length = strlen( (char *)(compressed + i) );
+			decodedLength += length;
+			/* increment length because the next operation is significantly
+			   easier when the null terminator is included in the length */
+			++length;
+			/* increment i by ceil((length + 1) / 2) */
+			i += (length / 2 + (length % 2 != 0));
+			++words;
+		} else if (compressed[i] == CBLT_NO_SPACE) {
+			--decodedLength;
+			++i;
+		} else {
+			/* any other codes are invalid, so move on */
+			++i;
+		}
+	}
+
+	/* If there is a punctuation character followed by a word character at the
+	   beginning of the string, then there is an implicit space before the word
+	   character. Skip past all leading spaces and check if the first non-space
+	   symbol is a punctuation character. If it is, increment WORDS since a
+	   leading punctuation marker counts as a pseudo-word. */
+	i = 0;
+	while (compressed[i] == ' ')
+		/* this syntax is easier to understand than an empty for loop. */
+		++i;
+	/* Using cblt_getCharStatus() only makes sense for values up to 255. */
+	if ( (compressed[i] < 0x100)
+		&& (cblt_getCharStatus(compressed[i]) == Punctuation) )
+		++words;
+
+	/* There is an implicit space between every word, except for where
+	   CBLT_NO_SPACE compensated by decrementing the encodedLength. If there are
+	   less than 2 words, there are no implicit spaces. */
+	if (words > 1)
+		decodedLength += words - 1;
+
+	return decodedLength;
 }
 
 /*

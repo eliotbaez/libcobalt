@@ -162,6 +162,7 @@ size_t cblt_getEncodedLength(const char *sentence);
  * function will return a pointer to an empty string.
  */
 char *cblt_decodeSentence(const uint16_t *compressed);
+size_t cblt_getDecodedLength(const uint16_t *compressed);
 
 /*
  * cblt_getUint16BlockSize takes a pointer to a null-terminated array of 16-bit
