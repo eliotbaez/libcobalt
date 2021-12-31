@@ -36,7 +36,7 @@ size_t cblt_getEncodedLength(const char *sentence) {
 	size_t encodedLength;	/* length of encoded integer block */
 	char *mSentence;		/* mutable copy of sentence */
 	char *group;			/* points to a group of characters */
-	enum substringStatus 
+	int 
 		currentStatus,		/* the type of characters stored in group */
 		nextStatus;			/* the type of characters following group */
 
@@ -143,7 +143,7 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 
 	char *mSentence;		/* points to a mutable copy of sentence */
 	char *group;			/* points to a group of characters */
-	enum substringStatus 
+	int 
 		currentStatus,		/* the type of characters stored in group */
 		nextStatus;			/* the type of characters following group */
 
@@ -216,7 +216,8 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 		group = cblt_splitstr(NULL, &currentStatus, &nextStatus);
 		switch (currentStatus) {
 		case Word:
-			if (cblt_findWord(group) != CBLT_WORD_NOT_FOUND) {
+			wordNum = cblt_findWord(group);
+			if (wordNum != CBLT_WORD_NOT_FOUND) {
 				compressed[i++] = (uint16_t)wordNum;
 			} else {
 				/* string literal injection */
