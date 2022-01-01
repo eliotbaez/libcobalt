@@ -17,6 +17,22 @@
 #ifndef COBALT_H
 #define COBALT_H
 
+/*
+ * TODO:
+ * Consider creating a typedef for uint16_t specifying that it is a raw data
+ * type for libcobalt.
+ * Alternatively, you could also go so far as to define an entire struct that
+ * holds metadata and a pointer to data for a compressed data block. This would
+ * also entail wrapper functions, like constructors and destructors, that would
+ * encapsulate the entire functionality of libcobalt.
+ */
+
+/* 
+ * TODO:
+ * Use a naming convention to distinguish between internal symbols and symbols
+ * intended for user
+ */
+
 /* 
  * WORDTABLE is a contiguous array of characters containing every word in a
  * predefined list, defined at compile time. The words are null-separated, and
@@ -90,8 +106,25 @@ extern const size_t GUIDETABLE_LEN;
 bool cblt_streq(const char *str1, const char *str2);
 
 /*
- * TODO:
- * add a description here
+ * Somewhat like strtok(), this function will split a string into substrings
+ * based on a predefined set of delimiter characters. The value returned is a
+ * pointer to the substring found, terminated by a null byte, just like
+ * strtok(). This function WILL modify its first argument. However, after
+ * iterating completely through all substrings in S, the string stored in S will
+ * be identical to its initial value. This function is intended for internal use
+ * only.
+ * 
+ * Parameters:
+ * s:
+ * 		the string to be divided into substrings
+ * pcurrentStatus:
+ * 		a pointer to an int holding the status of the current substring
+ * pnextStatus:
+ * 		a pointer to an int holding the status of the next substring
+ * 
+ * Return value:
+ * This function returns a pointer to the current substring, which is described
+ * by the value of *pcurrentStatus.
  */
 char *cblt_splitstr(char *s, int *pcurrentStatus, int *pnextStatus);
 
@@ -160,6 +193,10 @@ size_t cblt_getEncodedLength(const char *sentence);
  *
  * If passed a pointer to a 16-bit unsigned integer with the value 0, the
  * function will return a pointer to an empty string.
+ * 
+ * cblt_getDecodedLength is used internally to calculate the memory needed to
+ * store the string held by a block of compressed data. This function will
+ * return 0 on failure.
  */
 char *cblt_decodeSentence(const uint16_t *compressed);
 size_t cblt_getDecodedLength(const uint16_t *compressed);

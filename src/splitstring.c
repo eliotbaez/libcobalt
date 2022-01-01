@@ -36,7 +36,9 @@ const char *cblt_getStatusName(int status) {
    string, in fact. 
    TODO: 
    Find a way to define this function as inline to allow the compiler to
-   probably optimize the function. */
+   probably optimize the function. I've done as much as I can to optimize this
+   function myself, primarily by ordering the OR'ed conditions in the third
+   if statement in descending order of probability. */
 int cblt_getCharStatus(unsigned char c) {
 	if (c == ' ')
 		return Space;
@@ -63,7 +65,7 @@ int cblt_getCharStatus(unsigned char c) {
  * 		the string to be divided into substrings
  * pcurrentStatus:
  * 		a pointer to an int holding the status of the current substring
- * ppnextStatus:
+ * pnextStatus:
  * 		a pointer to an int holding the status of the next substring
  * 
  * Return value:
