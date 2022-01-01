@@ -293,6 +293,9 @@ size_t cblt_getDecodedLength(const uint16_t *compressed) {
 	unsigned words = 0;		/* number of actual words counted */
 	size_t i;				/* index for compressed */
 	
+	if (compressed == NULL)
+		return 0;
+
 	/* initialize to 1 to account for null terminator */
 	decodedLength = 1;
 	for (i = 0; compressed[i] != 0; ) {
@@ -354,97 +357,66 @@ size_t cblt_getDecodedLength(const uint16_t *compressed) {
  * programmer to free() the pointer after doing something meaningful with the
  * data.
  */
+
 char *cblt_decodeSentence(const uint16_t *compressed) {
 	size_t i;		/* index for compressed */
+	char *sentence;	/* decoded data */
 	size_t j;		/* index for sentence */
-	size_t size;	/* size of memory block needed to decode compressed */
-	size_t length;	/* length of a string */
-	char *sentence;
+	size_t length;	/* length of a word */
 
 	if (compressed == NULL)
 		return NULL;
-	
-	/* Dynamically reallocating memory as we decode the sentence would be
-	   pretty inefficient, so we read through the compressed data once to
-	   calculate the amount of memory needed to decompress it first. size is
-	   initialized to 1 so that there is space for a null terminator even for
-	   en empty string. */
-	size = 1;
-	for (i = 0; ; ) {
-		if (compressed[i] == 0) {
-			/* null terminator */
-			break;
-		} else if (compressed[i] == CBLT_BEGIN_STRING) {
-			/* incrementing i to skip past the CBLT_BEGIN_STRING signal 
-			   The +1 is because there is a space after every string.*/
-			length = strlen( (char *)&compressed[++i] ) + 1;
-			size += length;
-			/* increment i by ceil((length + 1) / 2) */
-			i += (length / 2 + (length % 2 != 0));
-		} else if (compressed[i] < WORDMAP_LEN) {
-			/* in range! */
-			/* +1 because all words are separated by a space too */
-			size += strlen(WORDTABLE + WORDMAP[ compressed[i] ] ) + 1;
-			++i;
-		} else {
-			/* otherwise do nothing and skip to the next int if
-			   compressed[i] is out of range */
-			++i;
-		}
-	}
 
-	sentence = malloc(sizeof(char) * size);
+	/* We use calloc in this case because we will make a special assumption
+	   during decoding: that untouched bytes in SENTENCE are zero. A non-zero
+	   byte indicates that a CBLT_NO_SPACE symbol was present in the last
+	   element in COMPRESSED. */
+	length = cblt_getDecodedLength(compressed);
+	sentence = calloc(length, sizeof(char));
 	if (sentence == NULL)
 		return NULL;
 
-	for (i = 0, j = 0 ; ; ) {
-		if (compressed[i] == 0) {
-			/* use the character before sentence[j] and terminate the sentence
-			   there, because the function tacks on a space after every word,
-			   even the last one. */
-			sentence[j - 1] = '\0';
-			break;
-		} else if (compressed[i] == CBLT_BEGIN_STRING) {
-			length = strlen( (char *)&compressed[++i] );
-			memcpy(sentence + j, compressed + i, length);
-			j += length;
-			/* increment length beforehand to make this calculation
-			   similar to the ones above */
-			++length;
-			i += (length / 2 + (length % 2 != 0));
-			/* and append a space like we said */
-			sentence[j++] = ' ';
+	/* By my specification, the first word will not have a leading space unless
+	   explicitly specified by a literal ASCII space. */
+	sentence[0] = 1;
+
+	for (i = 0; compressed[i] != 0; ) {
+		if (compressed[i] < 0x100) {
+			/* direct byte injection */
+			sentence[j++] = (char)compressed[i++];
 		} else if (compressed[i] < WORDMAP_LEN) {
-			length = strlen(WORDTABLE + WORDMAP[ compressed[i] ]);
-			memcpy(sentence + j, WORDTABLE + WORDMAP[ compressed[i] ], length);
+			/* valid words */
+			/* insert leading space if applicable */
+			if (sentence[j] == 0)
+				sentence[j++] = ' ';
+			
+			length = strlen( WORDTABLE + WORDMAP[compressed[i]] );
+			memcpy(sentence + j, WORDTABLE + WORDMAP[compressed[i]], length);
 			j += length;
 			++i;
-			/* append a space */
-			sentence[j++] = ' ';
+		} else if (compressed[i] == CBLT_BEGIN_STRING) {
+			/* string literal */
+			++i;	/* skip past the CBLT_BEGIN_STRING symbol */
+			/* insert leading space if applicable */
+			if (sentence[j] == 0)
+				sentence[j++] = ' ';
+			
+			length = strlen( (char *)(compressed + i) );
+			memcpy(sentence + j, compressed + i, length);
+			j += length;
+			/* then integer ceiling division */
+			++length;
+			i += (length / 2 + (length % 2 != 0));
+		} else if (compressed[i] == CBLT_NO_SPACE) {
+			/* The next word will not have a leading space */
+			sentence[j] = 1;
+			++i;
 		} else {
-			/* compressed[i] is out of range, do nothing */
+			/* any other codes are invalid, so move on */
 			++i;
 		}
 	}
+	sentence[j] = '\0';
 
 	return sentence;
 }
-
-#if 0
-int main(int argc, char **argv) {
-	uint16_t *compressed;
-	char *restored;
-	if (argc != 2) {
-		printf("bruh\n");
-		return 1;
-	}
-
-	compressed = cblt_encodeSentence(argv[1]);
-	restored = cblt_decodeSentence(compressed);
-
-	printf("%s\n%s\n", argv[1], restored);
-	free(compressed);
-	free(restored);
-	return 0;
-}
-#endif
