@@ -16,13 +16,34 @@
 #include "sentence.h"
 #include "splitstring.h"
 
-/* this is where the magic happens >:) */
+/* 
+ * A note about integer ceiling division:
+ *
+ * This code makes frequent use of integer ceiling division, specifically when
+ * calculating the space occupied by a string literal, rounded up to the nearest
+ * 2 bytes. Instead of the output of strlen(), which does not include the null
+ * terminator, this calculation uses strlen() + 1. To not confuse myself and
+ * anyone else reading this code, I'll put a reminder of this every time this
+ * calculation is made.
+ * 
+ * In particular, some value will be incremented by ceil(length/2), where length
+ * is the length of a string plus 1. Since no ceiling division operator exists
+ * for integers, we implement this manually:
+ * 		( ceil(length/2) )
+ * 	is expressed as
+ * 		( length/2 + (length%2 != 0) )
+ * 
+ * In this implementation, the ceiling devision calculation is easier to express
+ * and more understandable when length is the length of a string PLUS 1, as
+ * opposed to just the length as returned from strlen().
+ */
+
 
 /* copies NC characters from S to DEST, casting from char to uint16_t for each
    character; 1 char in S translates to 1 uint16_t in DEST */
 static void cblt_copyCharToUint16(const char *s, uint16_t *dest, size_t nc) {
-	size_t i = 0;
-	for ( ; i < nc; ++i)
+	size_t i;
+	for (i = 0; i < nc; ++i)
 		dest[i] = (uint16_t)s[i];
 }
 
@@ -63,11 +84,8 @@ size_t cblt_getEncodedLength(const char *sentence) {
 			++encodedLength;
 		} else {
 			/* string literal injection */
-			/* Increment encodedLength by ceil(length / 2). Something
-				something, the fun way of doing ceiling division :^) 
-				We add 1 at the end because of the special 2-byte signal that
-				the following bytes are a string literal. */
-			length = strlen(group);
+			/* integer ceiling division */
+			length = strlen(group) + 1;
 			encodedLength += (length / 2 + (length % 2 != 0)) + 1;
 		}
 		break;
@@ -93,7 +111,8 @@ size_t cblt_getEncodedLength(const char *sentence) {
 				++encodedLength;
 			} else {
 				/* string literal injection */
-				length = strlen(group);
+				/* integer ceiling division */
+				length = strlen(group) + 1;
 				encodedLength += (length / 2 + (length % 2 != 0)) + 1;
 			}
 			break;
@@ -180,18 +199,14 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 		} else {
 			/* string literal injection */
 			compressed[i++] = CBLT_BEGIN_STRING;
-			/* In this case, length will include the null byte for practicality
-			   reasons */
 			length = strlen(group);
 			/* We fill this integer with all 1s, to avoid having an element be
 			   all zero from the string's null terminator. This would cause a
-			   premature termination of the integer block. 
-			   length is incremented afterward to allow us to use memset's speed
-			   over strcpy, as well as make the next calculation easier. */
-			compressed[i + length++ / 2] = 0xffff;
+			   premature termination of the integer block. */
+			compressed[i + length / 2] = 0xffff;
+			/* memcpy and integer ceiling division require ++length */
+			++length;
 			memcpy(&compressed[i], group, length);
-			/* Increment i by ceil(length / 2). Since there's no ceiling
-			   division operator for ints, we'll do this the fun way. */
 			i += (length / 2 + (length % 2 != 0));
 		}
 		break;
@@ -224,7 +239,8 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 				/* string literal injection */
 				compressed[i++] = CBLT_BEGIN_STRING;
 				length = strlen(group);
-				compressed[i + length++ / 2] = 0xffff;
+				compressed[i + length / 2] = 0xffff;
+				++length;
 				memcpy(&compressed[i], group, length);
 				i += (length / 2 + (length % 2 != 0));
 			}
@@ -291,14 +307,11 @@ size_t cblt_getDecodedLength(const uint16_t *compressed) {
 			++words;
 		} else if (compressed[i] == CBLT_BEGIN_STRING) {
 			/* string literal */
-			/* increment i to skip past the CBLT_BEGIN_STRING signal */
-			++i;
+			++i;	/* skip past the CBLT_BEGIN_STRING symbol */
 			length = strlen( (char *)(compressed + i) );
 			decodedLength += length;
-			/* increment length because the next operation is significantly
-			   easier when the null terminator is included in the length */
+			/* then integer ceiling division */
 			++length;
-			/* increment i by ceil((length + 1) / 2) */
 			i += (length / 2 + (length % 2 != 0));
 			++words;
 		} else if (compressed[i] == CBLT_NO_SPACE) {
