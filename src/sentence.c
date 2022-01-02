@@ -98,9 +98,7 @@ size_t cblt_getEncodedLength(const char *sentence) {
 			/* space omission signal */
 			++encodedLength;
 		break;
-	case EndOfString:
-		/* Do nothing; I just included this case to signify that I didn't forget
-		   to include it. */
+	/* EndOfString is handled in the while loop below */
 	}
 
 	while (currentStatus != EndOfString) {
@@ -136,8 +134,6 @@ size_t cblt_getEncodedLength(const char *sentence) {
 				/* space omission signal */
 				++encodedLength;
 			break;
-		case EndOfString:
-			/* Once again, do nothing. */
 		}
 	}
 
@@ -223,9 +219,7 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 			/* space omission signal */
 			compressed[i++] = CBLT_NO_SPACE;
 		break;
-	case EndOfString:
-		/* Do nothing; I just included this case to signify that I didn't forget
-		   to include it. */
+	/* EndOfString is handled by the while loop below */
 	}
 
 	while (currentStatus != EndOfString) {
@@ -270,8 +264,6 @@ uint16_t *cblt_encodeSentence(const char *sentence) {
 				/* space omission signal */
 				compressed[i++] = CBLT_NO_SPACE;
 			break;
-		case EndOfString:
-			/* Once again, do nothing. */
 		}
 	}
 
